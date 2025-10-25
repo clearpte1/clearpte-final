@@ -13,7 +13,7 @@ origins = ["*", "http://localhost", "http://localhost:3000", "https://clearpte.v
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
