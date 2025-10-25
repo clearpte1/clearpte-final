@@ -7,7 +7,8 @@ from app.core import firebase
 
 app = FastAPI()
 
-origins = ["*", "http://localhost", "http://localhost:3000", "https://clearpte.vercel.app"]
+origins = ["*", "http://localhost", "http://localhost:3000", "https://clearpte.vercel.app",
+           "https://clearpte-uuq9-6zpl2zmgw-reeteshs-projects-1e809ccb.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
