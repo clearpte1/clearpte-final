@@ -1,0 +1,170 @@
+/* .App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+
+/* APEUNI PTE Replica Styles */
+.App {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4DB6AC;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00695C;
+}
+
+/* Smooth animations */
+* {
+  transition: all 0.3s ease;
+}
+
+/* Hero section gradient background */
+.hero-gradient {
+  background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+}
+
+/* Card hover effects */
+.MuiCard-root:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Button hover effects */
+.MuiButton-contained:hover {
+  transform: translateY(-2px);
+}
+
+/* Glass morphism effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+}
+
+/* Loading animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive text */
+@media (max-width: 768px) {
+  .MuiTypography-h1 {
+    font-size: 2rem !important;
+  }
+  
+  .MuiTypography-h2 {
+    font-size: 1.75rem !important;
+  }
+  
+  .MuiTypography-h3 {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* Custom progress bar */
+.MuiLinearProgress-root {
+  border-radius: 4px;
+  background-color: #E0F2F1;
+}
+
+.MuiLinearProgress-bar {
+  border-radius: 4px;
+  background: linear-gradient(90deg, #4DB6AC 0%, #26A69A 100%);
+}
+
+/* Floating action button */
+.MuiFab-root {
+  box-shadow: 0 8px 16px rgba(77, 182, 172, 0.3);
+}
+
+/* Custom chip styles */
+.MuiChip-root {
+  font-weight: 500;
+}
+
+/* Header shadow */
+.MuiAppBar-root {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Table styles */
+.MuiTableContainer-root {
+  border-radius: 12px;
+  border: 1px solid #E0E0E0;
+}
+
+.MuiTableHead-root {
+  background-color: #F5F5F5;
+}
+
+/* Dialog styles */
+.MuiDialog-paper {
+  border-radius: 16px;
+}
+
+/* Custom avatar colors */
+.user-avatar {
+  background: linear-gradient(135deg, #4DB6AC 0%, #26A69A 100%);
+  color: white;
+  font-weight: 600;
+}

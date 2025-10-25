@@ -1,0 +1,13 @@
+export { default as Header } from './Header.tsx';
+export { default as LoginModal } from './LoginModal.tsx';
+export { default as Dashboard } from './Dashboard.tsx';
+export { default as PracticeTests } from './PracticeTests.tsx';
+export { default as StudyMaterials } from './StudyMaterials.tsx';
+export { default as ProgressTracking } from './ProgressTracking.tsx';
+export { default as Profile } from './Profile.tsx';
+export { default as HeroSection } from './HeroSection.tsx';
+export { default as AIPracticeSection } from './AIPracticeSection.tsx';
+export { default as StudyToolsSection } from './StudyToolsSection.tsx';
+export { default as StudyMaterialsSection } from './StudyMaterialsSection.tsx';
+export { default as KnowledgeSections } from './KnowledgeSections.tsx';
+export { default as HomePage } from './HomePage.tsx';

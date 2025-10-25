@@ -1,0 +1,78 @@
+steps:
+  # Step 1: Build Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/clear-pte-ff08c/fastapi-backend:latest", "."]
+
+  # Step 2: Push Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/clear-pte-ff08c/fastapi-backend:latest"]
+
+  # Step 3: Deploy to Cloud Run (PRIVATE)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      [
+        "run",
+        "deploy",
+        "fastapi-backend",
+        "--image",
+        "gcr.io/clear-pte-ff08c/fastapi-backend:latest",
+        "--region",
+        "us-east1",
+        "--platform",
+        "managed",
+        "--port",
+        "8080",
+        "--timeout",
+        "300s",
+        "--service-account",
+        "cloudrun-db-sa@clear-pte-ff08c.iam.gserviceaccount.com",
+        "--vpc-connector",
+        "cr-connector",
+        "--vpc-egress",
+        "all-traffic",
+        "--set-env-vars",
+        "USE_CONNECTOR=true,ALLOYDB_INSTANCE_URI=projects/clear-pte-ff08c/locations/us-east1/clusters/clearpte/instances/clearpte-primary,DB_USER=postgres,DB_NAME=postgres",
+      ]
+
+# Optional: Track the pushed image
+images:
+  - "gcr.io/clear-pte-ff08c/fastapi-backend:latest"
+
+# Optional: Increase timeout if build takes long
+timeout: "900s"
+# steps:
+#   # Step 1: Build Docker image in Cloud Build
+#   - name: "gcr.io/cloud-builders/docker"
+#     args: ["build", "-t", "gcr.io/clear-pte-ff08c/fastapi-backend:latest", "."]
+
+#   # Step 2: Push image to Google Container Registry
+#   - name: "gcr.io/cloud-builders/docker"
+#     args: ["push", "gcr.io/clear-pte-ff08c/fastapi-backend:latest"]
+
+#   # Step 3: Deploy to Cloud Run
+#   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+#     entrypoint: gcloud
+#     args: [
+#         "run",
+#         "deploy",
+#         "fastapi-backend",
+#         "--image",
+#         "gcr.io/clear-pte-ff08c/fastapi-backend:latest",
+#         "--region",
+#         "us-east1", # Change to your preferred region
+#         "--platform",
+#         "managed",
+#         "--allow-unauthenticated",
+#         "--port",
+#         "8080",
+#         "--timeout",
+#         "300s",
+#       ]
+
+# # Optional: Track the pushed image
+# images:
+#   - "gcr.io/clear-pte-ff08c/fastapi-backend:latest"
+
+# # Optional: Increase timeout if build takes long
+# timeout: "900s"

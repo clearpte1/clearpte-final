@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+requests
+python-dotenv
+python-multipart
+firebase-admin
+sqlalchemy
+psycopg2-binary
+debugpy
+openai
+pg8000
+google-cloud-alloydb-connector[pg8000]
+inflect
+passlib==1.7.4
+bcrypt==4.2.0
+python-jose[cryptography]

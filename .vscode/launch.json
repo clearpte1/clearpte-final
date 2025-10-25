@@ -1,0 +1,47 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: FastAPI (venv)",
+      "type": "debugpy",
+      "request": "launch",
+      //"python": "${workspaceFolder}/backend/.venv/bin/python",     // <-- Linux/mac
+      "python": "${workspaceFolder}/backend/venv/Scripts/python.exe", // <-- Windows (uncomment and comment above)
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Frontend: React",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "start"
+      ],
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full App (React + FastAPI venv)",
+      "configurations": [
+        "Backend: FastAPI (venv)",
+        "Frontend: React"
+      ],
+      "stopAll": true
+    }
+  ]
+}
