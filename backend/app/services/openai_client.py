@@ -11,6 +11,7 @@ openai_client = openai.OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
+
 def similarity_score(a: str, b: str) -> float:
     a_words = a.lower().split()
     b_words = b.lower().split()
