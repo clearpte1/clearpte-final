@@ -7,12 +7,18 @@ from app.core import firebase
 
 app = FastAPI()
 
-origins = ["http://localhost", "http://localhost:3000", "https://clearpte.vercel.app"]
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "https://clearpte.vercel.app"
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=origins,        # allowed origins
+    allow_credentials=True,       # allow cookies/auth headers
+    allow_methods=["*"],          # allow all HTTP methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],          # allow all headers
 )
 
 app.include_router(api_router)
