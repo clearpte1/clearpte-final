@@ -7,15 +7,19 @@ from app.core import firebase
 
 app = FastAPI()
 
-origins = ["*", "http://localhost", "http://localhost:3000", "https://clearpte.vercel.app",
-           "https://clearpte-uuq9-6zpl2zmgw-reeteshs-projects-1e809ccb.vercel.app"]
+origins = [
+    "https://clearpte.vercel.app",  # frontend
+    "https://clearpte-uuq9-6zpl2zmgw-reeteshs-projects-1e809ccb.vercel.app",  # backend
+    "http://localhost:3000",  # local React dev
+    "http://localhost"        # fallback
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=origins,        # only these origins allowed
+    allow_credentials=True,       # allow cookies / auth headers if needed
+    allow_methods=["*"],          # allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],          # allow all headers
 )
 
 app.include_router(api_router)
