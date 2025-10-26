@@ -1,7 +1,7 @@
 # app/api/__init__.py
 
 from fastapi import APIRouter
-from app.api import healthcheck, openai_routes, auth_routes, evaluation_routes, uploadquestions, questions
+from app.api import healthcheck, openai_routes, auth_routes, evaluation_routes, uploadquestions, questions, users
 
 api_router = APIRouter()
 
@@ -11,3 +11,5 @@ api_router.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 api_router.include_router(evaluation_routes.router, prefix="/api", tags=["Evaluation"])
 api_router.include_router(uploadquestions.router, prefix="/api", tags=["Upload Questions"])
 api_router.include_router(questions.router, prefix="/api/questions", tags=["Questions"])
+api_router.include_router(users.router, prefix="/users", tags=["Users"])
+
