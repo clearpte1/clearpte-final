@@ -8,7 +8,7 @@ export const fetchReadAloudQuestions = async (): Promise<
 > => {
   try {
     const response = await axios.get<any[]>(
-      `${API_BASE}/api/questions/read-aloud`
+      `${API_BASE}/questions/read-aloud`
     );
 
     if (response.data && response.data.length > 0) {
@@ -43,7 +43,7 @@ export const fetchReadAloudQuestionById = async (
 ): Promise<ReadAloudQuestion> => {
   try {
     const response = await axios.get<any>(
-      `${API_BASE}/api/questions/read-aloud/${id}`
+      `${API_BASE}/questions/read-aloud/${id}`
     );
     return {
       id: response.data.id,
@@ -71,7 +71,7 @@ export const fetchReadAloudQuestionById = async (
 export const fetchRepeatSentenceQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/repeat-sentence`
+      `${API_BASE}/questions/repeat-sentence`
     );
     return response.data;
   } catch (error) {
@@ -85,7 +85,7 @@ export const fetchRepeatSentenceQuestionById = async (
 ): Promise<any> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/repeat-sentence/${id}`
+      `${API_BASE}/questions/repeat-sentence/${id}`
     );
     return response.data;
   } catch (error) {
@@ -97,7 +97,7 @@ export const fetchRepeatSentenceQuestionById = async (
 export const fetchDescribeImageQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/describe-image`
+      `${API_BASE}/questions/describe-image`
     );
     return response.data;
   } catch (error) {
@@ -111,7 +111,7 @@ export const fetchDescribeImageQuestionById = async (
 ): Promise<any> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/describe-image/${id}`
+      `${API_BASE}/questions/describe-image/${id}`
     );
     return response.data;
   } catch (error) {
@@ -123,7 +123,7 @@ export const fetchDescribeImageQuestionById = async (
 export const fetchRetellLectureQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/retell-lecture`
+      `${API_BASE}/questions/retell-lecture`
     );
     return response.data;
   } catch (error) {
@@ -137,7 +137,7 @@ export const fetchRetellLectureQuestionById = async (
 ): Promise<any> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/retell-lecture/${id}`
+      `${API_BASE}/questions/retell-lecture/${id}`
     );
     return response.data;
   } catch (error) {
@@ -148,7 +148,7 @@ export const fetchRetellLectureQuestionById = async (
 
 export const fetchAnswerShortQuestions = async (): Promise<any[]> => {
   try {
-    const response = await axios.get(`${API_BASE}/api/questions/answer-short`);
+    const response = await axios.get(`${API_BASE}/questions/answer-short`);
     return response.data;
   } catch (error) {
     console.error("Error fetching answer short questions:", error);
@@ -161,7 +161,7 @@ export const fetchAnswerShortQuestionById = async (
 ): Promise<any> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/answer-short/${id}`
+      `${API_BASE}/questions/answer-short/${id}`
     );
     return response.data;
   } catch (error) {

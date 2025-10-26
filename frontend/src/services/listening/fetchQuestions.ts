@@ -4,7 +4,7 @@ const API_BASE = process.env.REACT_APP_API_URL;
 export const fetchSummarizeSpokenTextQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/summarize-spoken-text`
+      `${API_BASE}/questions/summarize-spoken-text`
     );
     return response.data;
   } catch (error) {
@@ -18,7 +18,7 @@ export const fetchMultipleChoiceMultipleQuestions = async (): Promise<
 > => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/listening-multiple-choice-multiple`
+      `${API_BASE}/questions/listening-multiple-choice-multiple`
     );
     return response.data;
   } catch (error) {
@@ -33,7 +33,7 @@ export const fetchMultipleChoiceMultipleQuestions = async (): Promise<
 export const fetchMultipleChoiceSingleQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/listening-multiple-choice-single`
+      `${API_BASE}/questions/listening-multiple-choice-single`
     );
     return response.data;
   } catch (error) {
@@ -48,7 +48,7 @@ export const fetchMultipleChoiceSingleQuestions = async (): Promise<any[]> => {
 export const fetchFillInTheBlanksQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/listening-fill-blanks`
+      `${API_BASE}/questions/listening-fill-blanks`
     );
     return response.data;
   } catch (error) {
@@ -62,7 +62,7 @@ export const fetchHighlightCorrectSummaryQuestions = async (): Promise<
 > => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/highlight-correct-summary`
+      `${API_BASE}/questions/highlight-correct-summary`
     );
     return response.data;
   } catch (error) {
@@ -74,7 +74,7 @@ export const fetchHighlightCorrectSummaryQuestions = async (): Promise<
 export const fetchSelectMissingWordsQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/select-missing-word`
+      `${API_BASE}/questions/select-missing-word`
     );
     return response.data;
   } catch (error) {
@@ -88,7 +88,7 @@ export const fetchHighlightIncorrectWordsQuestions = async (): Promise<
 > => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/highlight-incorrect-words`
+      `${API_BASE}/questions/highlight-incorrect-words`
     );
     return response.data;
   } catch (error) {
@@ -100,7 +100,7 @@ export const fetchHighlightIncorrectWordsQuestions = async (): Promise<
 export const fetchWriteFromDictationQuestions = async (): Promise<any[]> => {
   try {
     const response = await axios.get(
-      `${API_BASE}/api/questions/write-from-dictation`
+      `${API_BASE}/questions/write-from-dictation`
     );
     return response.data;
   } catch (error) {

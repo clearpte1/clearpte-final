@@ -5,7 +5,7 @@ const API_BASE = process.env.REACT_APP_API_URL;
 export const submitSummarizeTextAnswers = async (data: any): Promise<any> => {
   try {
     const response = await axios.post(
-      `${API_BASE}/api/evaluate-summary`,
+      `${API_BASE}/evaluate-summary`,
       data,
       {
         headers: {
@@ -22,7 +22,7 @@ export const submitSummarizeTextAnswers = async (data: any): Promise<any> => {
 
 export const submitEssayAnswers = async (data: any): Promise<any> => {
   try {
-    const response = await axios.post(`${API_BASE}/api/evaluate-essay`, data, {
+    const response = await axios.post(`${API_BASE}/evaluate-essay`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

@@ -5,7 +5,7 @@ const API_BASE = process.env.REACT_APP_API_URL;
 
 export const compareAudio = async (data: any): Promise<any> => {
   try {
-    const response = await axios.post(`${API_BASE}/api/compare-audio`, data, {
+    const response = await axios.post(`${API_BASE}/compare/compare-audio`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -20,7 +20,7 @@ export const compareAudio = async (data: any): Promise<any> => {
 export const describeImageSubmitAnswers = async (data: any): Promise<any> => {
   try {
     const response = await axios.post(
-      `${API_BASE}/api/evaluate-from-image`,
+      `${API_BASE}/evaluate/evaluate-from-image`,
       data,
       {
         headers: {
@@ -37,7 +37,7 @@ export const describeImageSubmitAnswers = async (data: any): Promise<any> => {
 
 export const reTellLectureSubmitAnswers = async (data: any): Promise<any> => {
   try {
-    const response = await axios.post(`${API_BASE}/api/evaluate-retell`, data, {
+    const response = await axios.post(`${API_BASE}/evaluate/evaluate-retell`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -54,7 +54,7 @@ export const answerShortQuestionSubmitAnswers = async (
 ): Promise<any> => {
   try {
     const response = await axios.post(
-      `${API_BASE}/api/evaluate-short-answer`,
+      `${API_BASE}/evaluate/evaluate-short-answer`,
       data,
       {
         headers: {

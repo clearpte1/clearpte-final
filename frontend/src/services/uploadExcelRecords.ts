@@ -13,7 +13,7 @@ export class UploadExcelRecordsService {
     data: any[]
   ): Promise<UploadResponse> {
     try {
-      await axios.post(`${API_BASE}/api/${endpoint}`, data, {
+      await axios.post(`${API_BASE}/upload/${endpoint}`, data, {
         headers: {
           "Content-Type": "application/json",
         },
