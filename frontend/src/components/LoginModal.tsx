@@ -76,16 +76,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose, onLogin, onRegis
         {mode === 'login' ? 'Login to PTE Practice' : 'Create your account'}
       </DialogTitle>
       <DialogContent>
-        {mode === 'login' && (
-          <Box sx={{ mb: 2 }}>
-            <Alert severity="info" sx={{ mb: 2 }}>
-              <strong>Demo Credentials:</strong><br />
-              Admin: admin@pte.com / admin123<br />
-              User: user@pte.com / user123
-            </Alert>
-          </Box>
-        )}
-
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
         <form onSubmit={handleSubmit}>

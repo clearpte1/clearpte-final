@@ -54,7 +54,7 @@ const DualAudioPlayer: React.FC<DualAudioPlayerProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const shouldUseAudioUrl = Boolean(audio.audioUrl && audio.audioUrl.trim().length > 0);
+  const shouldUseAudioUrl = Boolean(audio?.audioUrl && audio?.audioUrl.trim().length > 0);
   const audioSource = shouldUseAudioUrl ? 'url' : 'tts';
 
   // Format time display
@@ -128,8 +128,8 @@ const DualAudioPlayer: React.FC<DualAudioPlayerProps> = ({
 
   // Setup audio element
   useEffect(() => {
-    if (audioSource === 'url' && audio.audioUrl) {
-      const audioElement = new Audio(audio.audioUrl);
+    if (audioSource === 'url' && audio?.audioUrl) {
+      const audioElement = new Audio(audio?.audioUrl);
       audioRef.current = audioElement;
 
       audioElement.addEventListener('loadstart', () => setIsLoading(true));
@@ -166,7 +166,7 @@ const DualAudioPlayer: React.FC<DualAudioPlayerProps> = ({
         audioRef.current = null;
       };
     }
-  }, [audioSource, audio.audioUrl, onEnd, onError]);
+  }, [audioSource, audio?.audioUrl, onEnd, onError]);
 
   // Auto play
   useEffect(() => {
@@ -353,7 +353,7 @@ const DualAudioPlayer: React.FC<DualAudioPlayerProps> = ({
 }
       {audioSource === 'tts' && (
         <TextToSpeech
-          text={audio.audioText}
+          text={audio?.audioText}
           autoPlay={autoPlay}
           onStart={onStart}
           onEnd={onEnd}

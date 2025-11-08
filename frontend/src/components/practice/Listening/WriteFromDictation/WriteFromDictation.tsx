@@ -26,18 +26,21 @@ import ActionButtons from '../../common/ActionButtons';
 import NavigationSection from '../../common/NavigationSection';
 import QuestionHeader from '../../common/QuestionHeader';
 import { useFloatingSearch } from '../../../hooks/useFloatingSearch';
+import { fetchWriteFromDictationQuestions } from '../../../../services/listening/fetchQuestions';
 
 interface WriteFromDictationProps { }
 
 const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
+  const [questions, setQuestions] = useState<WriteFromDictationQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [question, setQuestion] = useState<WriteFromDictationQuestion>(mockWriteFromDictationQuestions[currentQuestionIndex]);
+  const [question, setQuestion] = useState<WriteFromDictationQuestion | undefined>(questions[currentQuestionIndex]);
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
 
   // State management
   const [userInput, setUserInput] = useState<string>('');
   const [timer, setTimer] = useState<TimerState>({
-    timeRemaining: question.timeLimit,
+    timeRemaining: question?.timeLimit || 0,
     isRunning: false,
     warningThreshold: 60,
     autoSubmit: true,
@@ -54,12 +57,56 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<Date>(new Date());
 
+  useEffect(() => {
+    async function fetchQuestions() {
+      try {
+        const apiQuestions = await fetchWriteFromDictationQuestions();
+        const mappedQuestions: WriteFromDictationQuestion[] = apiQuestions.map((question): WriteFromDictationQuestion => ({
+          id: question.id,
+          category: question.category,
+          difficulty: question.difficulty,
+          keyWords: (question.key_words || []) as string[],
+          title: question.title,
+          timeLimit: 10,
+          audio: {
+            audioUrl: question.audio_url,
+            audioText: question.sentence,
+            audioTitle: question.title,
+          },
+          audioText: question.sentence,
+          instructions: question?.instructions || '',
+          tags: (question?.tags || []) as string[],
+          maxScore: question.max_score,
+          isNew: false,
+          isMarked: false,
+          pracStatus: 'Practice',
+          hasExplanation: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          explanation: '',
+          speaker: ''
+        }));
+        console.log(mappedQuestions);
+        setQuestions(mappedQuestions);
+        if (mappedQuestions && mappedQuestions.length > 0) {
+          setCurrentQuestionIndex(0);
+          setQuestion(mappedQuestions[0]);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+        setLoading(false);
+      }
+    }
+    fetchQuestions();
+  }, []);
+
   // Sync state when question changes
   useEffect(() => {
     setUserInput('');
     setWordCount(0);
     setTimer({
-      timeRemaining: question.timeLimit,
+      timeRemaining: question?.timeLimit || 0,
       isRunning: false,
       warningThreshold: 60,
       autoSubmit: true,
@@ -83,7 +130,7 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
       timerRef.current = setTimeout(() => {
         setTimer(prev => ({ ...prev, timeRemaining: prev.timeRemaining - 1 }));
       }, 1000);
-    } else if (timer.timeRemaining === 0 && timer.autoSubmit && !isSubmitted) {
+    } else if (timer.isRunning && timer.timeRemaining === 0 && timer.autoSubmit && !isSubmitted) {
       handleSubmit();
     }
 
@@ -104,23 +151,22 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
 
   const studentProgress = mockStudentProgress;
 
-
   // Enable floating search button for this component
   useFloatingSearch({
-    topics: mockWriteFromDictationQuestions,
+    topics: questions,
     title: 'write from dictation',
     type: 'listening',
     onTopicSelect: (topic: any) => {
       setQuestion(topic);
-      setCurrentQuestionIndex(mockWriteFromDictationQuestions.findIndex(t => t.id === topic.id));
+      setCurrentQuestionIndex(questions.findIndex(t => t.id === topic.id));
     },
     enabled: true
   });
   const handleNext = () => {
-    if (currentQuestionIndex < mockWriteFromDictationQuestions.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
       const newIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(newIndex);
-      setQuestion(mockWriteFromDictationQuestions[newIndex]);
+      setQuestion(questions[newIndex]);
     }
   };
 
@@ -128,7 +174,7 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
     if (currentQuestionIndex > 0) {
       const newIndex = currentQuestionIndex - 1;
       setCurrentQuestionIndex(newIndex);
-      setQuestion(mockWriteFromDictationQuestions[newIndex]);
+      setQuestion(questions[newIndex]);
     }
   };
 
@@ -137,7 +183,7 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
   };
 
   const handleQuestionSelect = (option: any) => {
-    const newIndex = mockWriteFromDictationQuestions.findIndex(q => q.id === option.id);
+    const newIndex = questions.findIndex(q => q.id === option.id);
     if (newIndex !== -1) {
       setCurrentQuestionIndex(newIndex);
       setQuestion(option);
@@ -173,7 +219,7 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
     if (normalizedUser === normalizedExpected) return true;
 
     // Check acceptable variations
-    if (question.acceptableVariations && question.acceptableVariations[expectedWord]) {
+    if (question?.acceptableVariations && question.acceptableVariations[expectedWord]) {
       return question.acceptableVariations[expectedWord].some(variation =>
         normalizeText(variation) === normalizedUser
       );
@@ -193,18 +239,18 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
 
     // Analyze the response
     const userWords = userInput.trim().split(/\s+/).filter(word => word.length > 0);
-    const expectedWords = (question.audio?.audioText || question.audioText).split(/\s+/).filter(word => word.length > 0);
+    const expectedWords = ((question?.audio?.audioText || question?.audioText)?.split(/\s+/).filter(word => word?.length > 0)) || [];
 
     let wordsCorrect = 0;
     let keyWordsCorrect = 0;
     const detailedAnalysis: WordAnalysis[] = [];
 
-    const maxLength = Math.max(userWords.length, expectedWords.length);
+    const maxLength = Math.max(userWords?.length || 0, expectedWords?.length || 0);
 
     for (let i = 0; i < maxLength; i++) {
       const userWord = userWords[i] || '';
       const expectedWord = expectedWords[i] || '';
-      const isKeyWord = question.keyWords.includes(normalizeText(expectedWord));
+      const isKeyWord = question?.keyWords?.includes(normalizeText(expectedWord)) || false;
       const isCorrect = expectedWord.length > 0 && isWordAcceptable(userWord, expectedWord);
 
       if (isCorrect) {
@@ -227,27 +273,27 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
     const keyWordWeight = 2.5;
     const regularWordWeight = 1.0;
 
-    const totalKeyWords = question.keyWords.length;
-    const totalRegularWords = expectedWords.length - totalKeyWords;
+    const totalKeyWords = question?.keyWords?.length ?? 0;
+    const totalRegularWords = Math.max(0, (expectedWords.length ?? 0) - totalKeyWords);
 
     const keyWordPoints = keyWordsCorrect * keyWordWeight;
     const regularWordPoints = (wordsCorrect - keyWordsCorrect) * regularWordWeight;
-    const maxPossiblePoints = (totalKeyWords * keyWordWeight) + (totalRegularWords * regularWordWeight);
+    const maxPossiblePoints = ((totalKeyWords * keyWordWeight) + (totalRegularWords * regularWordWeight)) || 1;
 
-    const score = Math.round((keyWordPoints + regularWordPoints) / maxPossiblePoints * question.maxScore);
-    const accuracy = Math.round((wordsCorrect / expectedWords.length) * 100);
+    const score = Math.round(((keyWordPoints + regularWordPoints) / maxPossiblePoints) * (question?.maxScore ?? 0));
+    const accuracy = expectedWords.length ? Math.round((wordsCorrect / expectedWords.length) * 100) : 0;
 
     const result: WriteFromDictationResult = {
-      questionId: String(question.id),
+      questionId: String(question?.id),
       userInput,
-      correctText: question.audio?.audioText || question.audioText,
+      correctText: question?.audio?.audioText || question?.audioText || '',
       score: Math.max(0, score),
-      maxScore: question.maxScore,
+      maxScore: question?.maxScore || 0,
       accuracy,
       wordsCorrect,
-      totalWords: expectedWords.length,
+      totalWords: expectedWords.length || 0,
       keyWordsCorrect,
-      totalKeyWords,
+      totalKeyWords: totalKeyWords || 0,
       completedAt: endTime,
       timeSpent,
       detailedAnalysis
@@ -261,7 +307,7 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
     setUserInput('');
     setWordCount(0);
     setTimer({
-      timeRemaining: question.timeLimit,
+      timeRemaining: question?.timeLimit || 0,
       isRunning: false,
       warningThreshold: 60,
       autoSubmit: true,
@@ -299,11 +345,17 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
 
   return (
     <GradientBackground>
+      {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+              <Typography variant="h6">Loading questions...</Typography>
+            </Box>
+            ) : (
+            <>
       <PracticeCardWithInstructionsPopover
         icon="WFD"
         title="Write From Dictation"
-        instructions={question.instructions}
-        difficulty={question.difficulty}
+        instructions={question?.instructions}
+        difficulty={question?.difficulty}
         instructionsConfig={{
           sections: [
             {
@@ -353,12 +405,12 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
 
         {/* Dual Audio Player - Supports both audio files and text-to-speech */}
         <DualAudioPlayer
-          audio={question.audio}
+          audio={question?.audio || { audioUrl: '', audioText: '', audioTitle: '' }}
           autoPlay={false}
           onStart={handleAudioStart}
           onEnd={() => console.log('Audio ended')}
           onError={(error) => console.error('Audio error:', error)}
-          topicTitle={question.title}
+          topicTitle={question?.title}
           questionNumber={String(questionNumber)}
           remainingTime={`${Math.floor(timer.timeRemaining / 60)}:${(timer.timeRemaining % 60).toString().padStart(2, '0')}`}
           testedCount={studentProgress.testedCount}
@@ -440,7 +492,7 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
         open={showQuestionSelector}
         onClose={() => setShowQuestionSelector(false)}
         onSelect={handleQuestionSelect}
-        topics={mockWriteFromDictationQuestions}
+        topics={questions}
         title="Write From Dictation"
         type="question"
       />
@@ -500,20 +552,20 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
       <AnswerDialog
         open={showAnswer}
         onClose={() => setShowAnswer(false)}
-        title={question.title}
+        title={question?.title || ''}
         answers={[{
           id: 'correct-sentence',
-          correctAnswer: question.audio?.audioText || question.audioText,
+          correctAnswer: question?.audio?.audioText || question?.audioText || '',
           label: "Correct sentence"
         }]}
-        explanation={question.explanation}
+        explanation={question?.explanation}
         guidance={
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
               Key words to focus on:
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
-              {question.keyWords.map((word, index) => (
+              {question?.keyWords.map((word, index) => (
                 <Chip
                   key={index}
                   label={word}
@@ -533,6 +585,8 @@ const WriteFromDictationRefactored: React.FC<WriteFromDictationProps> = () => {
         onClose={() => setShowTranslate(false)}
         description="Translation feature will help you understand the audio content in your preferred language."
       />
+      </>
+      )}
     </GradientBackground>
   );
 };

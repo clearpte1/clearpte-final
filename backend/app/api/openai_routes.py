@@ -220,59 +220,63 @@ async def compare_audio(
 
     tmp_file_path = None
     try:
-        # 1) Save temporary audio file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp_file:
             tmp_file.write(await audio.read())
             tmp_file_path = tmp_file.name
 
-        # 2) Transcribe with Whisper
         transcription = openai_client.audio.transcriptions.create(
             model="whisper-1",
             file=open(tmp_file_path, "rb")
         )
         transcribed_text = getattr(transcription, "text", None) or transcription.get("text") or ""
 
-        # 3) Tokenize & analyze
         ref_tokens = tokenize(referenceText)
         trans_tokens = tokenize(transcribed_text)
         token_report = build_token_analysis(ref_tokens, trans_tokens)
-        stats = token_report["stats"]
-
-        # 4) Computed heuristic scores
-        content_computed = compute_content_score_from_stats(stats)
-        fluency_computed = compute_fluency_from_text(transcribed_text)
-        pronunciation_computed = None
-
-        # 5) Ask LLM for scoring + feedback
         analysis_prompt = f"""
-            You are an English speaking examiner.
-            Compare the reference and the transcription.
+        You are a strict PTE Speaking evaluator. Score the user's Read Aloud response.
 
-            Reference: "{referenceText}"
-            Transcription: "{transcribed_text}"
+        Evaluation criteria:
+        - Content (0–90): Accuracy of words spoken compared to the reference text.
+        - Oral Fluency (0–90): Smoothness, rhythm, pacing, and natural flow.
+        - Pronunciation (0–90): Clarity, stress, phonemes, and intelligibility.
 
-            Token diff summary:
-            {token_report["analysis"][:50]}  # shortened
+        Reference Text:
+        "{referenceText}"
 
-            Return STRICT JSON with this structure:
-            {{
+        Transcription:
+        "{transcribed_text}"
+
+        Token diff summary:
+        {token_report["analysis"][:50]}
+
+        Return STRICT JSON with the following structure.
+        ALL fields are mandatory — do NOT leave any blank or omit any key:
+
+        {{
             "scores": {{
-                "Content": [0-100],
-                "Fluency": [0-100],
-                "Pronunciation": [0-100]
+                "Content": [0-90],
+                "Fluency": [0-90],
+                "Pronunciation": [0-90],
+                "Overall": [0-90]
             }},
-            "feedback": [
-                "positive comment 1",
-                "positive comment 2",
-                "positive comment 3"
+            "corrections": [
+                "Highlight incorrect, missing, or changed words.",
+                "Highlight unclear or mispronounced words.",
             ],
-            "improvements": [
-                "improvement tip 1",
-                "improvement tip 2"
+            "feedback":[
+                "Give detailed but concise feedback to improve fluency & pronunciation.",
+                "Provide word-specific pronunciation guidance.",
             ]
-            }}
-            Only return valid JSON.
-            """
+        }}
+
+        Rules:
+        - DO NOT rewrite the passage.
+        - DO NOT add explanations.
+        - Provide strict scoring like a PTE examiner.
+        - Only output valid JSON. No additional text outside the JSON.
+        """
+
 
         llm_resp = openai_client.chat.completions.create(
             model="gpt-4o-mini",
@@ -287,35 +291,14 @@ async def compare_audio(
         try:
             llm_json = json.loads(llm_text)
         except Exception:
-            llm_json = {
-                "scores": {"Content": None, "Fluency": None, "Pronunciation": None},
-                "feedback": [],
-                "improvements": []
-            }
-
-        # 6) Blend computed + LLM scores
-        scores_final = {
-            "Content": combine_scores(content_computed, llm_json["scores"].get("Content")),
-            "Fluency": combine_scores(fluency_computed, llm_json["scores"].get("Fluency")),
-            "Pronunciation": combine_scores(pronunciation_computed, llm_json["scores"].get("Pronunciation"))
-        }
+            raise HTTPException(status_code=500, detail="LLM returned invalid JSON")
 
         result = {
             "transcribedText": transcribed_text,
             "referenceText": referenceText,
-            "tokenAnalysis": token_report["analysis"],
-            "stats": stats,
-            "scores": {
-                "computed": {
-                    "Content": content_computed,
-                    "Fluency": fluency_computed,
-                    "Pronunciation": pronunciation_computed
-                },
-                "llm": llm_json["scores"],
-                "final": scores_final
-            },
-            "feedback": llm_json.get("feedback", []),
-            "improvements": llm_json.get("improvements", [])
+            "scores": llm_json.get("scores", {}),
+            "corrections": llm_json.get("corrections", {}),
+            "feedback": llm_json.get("feedback", {})
         }
 
         return JSONResponse(result)

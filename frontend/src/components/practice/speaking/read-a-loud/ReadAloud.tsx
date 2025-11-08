@@ -471,7 +471,7 @@ export const ReadAloud: React.FC<PracticeTestsProps> = ({ user }) => {
         <FeedbackDisplay
           feedback={scores[selectedQuestion?.id || '']}
         />
-        <Box sx={{ mt: 2 }}>
+        {/* <Box sx={{ mt: 2 }}>
           {Object.entries(scores).map(([questionId, scoreData]: [string, any]) => {
             if (questionId.toString() === selectedQuestion?.id.toString()) {
               return (
@@ -520,7 +520,7 @@ export const ReadAloud: React.FC<PracticeTestsProps> = ({ user }) => {
             }
             return null;
           })}
-        </Box>
+        </Box> */}
         <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid #e0e0e0' }}>
           <NavigationSection
             onSearch={handleSearch}
