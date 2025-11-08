@@ -917,10 +917,7 @@ export class AdminService {
       switch (key) {
         // Speaking
         case "Speaking-read-aloud":
-          return (
-            require("../components/practice/speaking/read-a-loud/ReadALoudMockData")
-              .readAloudQuestions || []
-          );
+          return [];
         case "Speaking-repeat-sentence":
           return (
             require("../components/practice/speaking/repeat-sectence/RepeatSentenceMockData")
@@ -932,10 +929,7 @@ export class AdminService {
               .questionTopics || []
           );
         case "Speaking-retell-lecture":
-          return (
-            require("../components/practice/speaking/re-tell-leacture/audioTopic")
-              .audioTopics || []
-          );
+          return [];
 
         // Writing
         case "Writing-summarize-text":
