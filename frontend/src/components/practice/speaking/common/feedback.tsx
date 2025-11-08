@@ -14,7 +14,8 @@ interface FeedbackProps {
   feedback?: {
     scores?: FeedbackScores;
     corrections?: string[];   // bullet points
-    feedback?: string[];      // bullet points
+    feedback?: string[]; 
+    singleLineFeedback?: string;     // bullet points
   };
   showFeedback?: boolean;
 }
@@ -49,7 +50,12 @@ export const Feedback: React.FC<FeedbackProps> = ({ feedback, showFeedback = tru
             </Box>
           </Box>
 
-          <Box>
+          {feedback.singleLineFeedback && <Box>
+            <Box sx={{ fontWeight: 'medium', mb: 1, color: 'success.main' }}>Feedback:</Box>
+            <Box sx={{ fontSize: '14px' }}>{feedback.singleLineFeedback}</Box>
+          </Box>}
+
+          {feedback.feedback && <Box >
             <Box sx={{ fontWeight: 'medium', mb: 1, color: 'success.main' }}>Feedback:</Box>
             {feedback.feedback?.map((item: string, index: number) => (
               <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
@@ -57,9 +63,9 @@ export const Feedback: React.FC<FeedbackProps> = ({ feedback, showFeedback = tru
                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
               </Box>
             ))}
-          </Box>
+          </Box>}
 
-          <Box>
+          {feedback.corrections && <Box>
             <Box sx={{ fontWeight: 'medium', mb: 1, color: 'warning.main' }}>💡 Areas for Improvement:</Box>
             {feedback.corrections?.map((item: string, index: number) => (
               <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
@@ -67,7 +73,7 @@ export const Feedback: React.FC<FeedbackProps> = ({ feedback, showFeedback = tru
                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
               </Box>
             ))}
-          </Box>
+          </Box>}
         </Box>
       }
       showMetadata={false}

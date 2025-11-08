@@ -25,7 +25,7 @@ import { ReadAloudQuestion, UserAttempt } from './ReadAloudTypes';
 import { useFloatingSearch } from '../../../hooks/useFloatingSearch';
 import axios from 'axios';
 import { fetchReadAloudQuestions } from '../../../../services/speaking/fetchQuestions';
-import { compareAudio } from '../../../../services/speaking/submitAnswers';
+import { ReadAloudSubmitAnswers } from '../../../../services/speaking/submitAnswers';
 import FeedbackDisplay from '../common/feedback';
 
 interface PracticeTestsProps {
@@ -294,7 +294,7 @@ export const ReadAloud: React.FC<PracticeTestsProps> = ({ user }) => {
       const formData = new FormData();
       formData.append('audio', audioRecording.recordedBlob);
       formData.append('referenceText', selectedQuestion?.text || '');
-      const response = await compareAudio(formData);
+      const response = await ReadAloudSubmitAnswers(formData);
       if (!response) throw new Error('Failed to process recording');
       setScores(prev => ({ ...prev, [selectedQuestion?.id || 'unknown']: response }));
       // Save attempt locally
@@ -471,56 +471,6 @@ export const ReadAloud: React.FC<PracticeTestsProps> = ({ user }) => {
         <FeedbackDisplay
           feedback={scores[selectedQuestion?.id || '']}
         />
-        {/* <Box sx={{ mt: 2 }}>
-          {Object.entries(scores).map(([questionId, scoreData]: [string, any]) => {
-            if (questionId.toString() === selectedQuestion?.id.toString()) {
-              return (
-                <StyledCard key={questionId}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Score Analysis
-                    </Typography>
-                    <Stack spacing={2}>
-                      {scoreData.transcribedText && (
-                        <Box>
-                          <Typography variant="subtitle2" color="primary">
-                            Your Speech:
-                          </Typography>
-                          <Typography variant="body2">
-                            {scoreData.transcribedText}
-                          </Typography>
-                        </Box>
-                      )}
-                      {scoreData?.scores?.final && (
-                        <Box>
-                          <Typography variant="subtitle2" color="primary">
-                            Content Score:
-                          </Typography>
-                          <Typography variant="body1">
-                            {scoreData.scores?.final.Content}
-                          </Typography>
-                          <Typography variant="subtitle2" color="primary">
-                            Fluency Score:
-                          </Typography>
-                          <Typography variant="body1">
-                            {scoreData.scores?.final.Fluency}
-                          </Typography>
-                          <Typography variant="subtitle2" color="primary">
-                            Pronunciation Score:
-                          </Typography>
-                          <Typography variant="body1">
-                            {scoreData.scores?.final.Pronunciation}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Stack>
-                  </CardContent>
-                </StyledCard>
-              );
-            }
-            return null;
-          })}
-        </Box> */}
         <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid #e0e0e0' }}>
           <NavigationSection
             onSearch={handleSearch}

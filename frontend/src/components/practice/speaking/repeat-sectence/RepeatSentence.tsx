@@ -24,7 +24,7 @@ import { instructionsSections } from './RepeatSentenceMockData';
 import { RepeatSentenceQuestion } from './RepeatSentenceTypes';
 import { useFloatingSearch } from '../../../hooks/useFloatingSearch';
 import { fetchRepeatSentenceQuestions } from '../../../../services/speaking/fetchQuestions';
-import { compareAudio } from '../../../../services/speaking/submitAnswers';
+import { RepeatSentenceSubmitAnswers } from '../../../../services/speaking/submitAnswers';
 import FeedbackDisplay from '../common/feedback';
 
 const RECORDING_DURATION_MS = 15000;
@@ -239,7 +239,8 @@ export const RepeatSentence: React.FC<PracticeTestsProps> = ({ user }) => {
       const formData = new FormData();
       formData.append('audio', audioRecording.recordedBlob);
       formData.append('referenceText', currentQuestion?.sentence || '');
-      const response = await compareAudio(formData);
+      const response = await RepeatSentenceSubmitAnswers(formData);
+      console.log(response);
       setScores(prev => ({ ...prev, [currentQuestion?.id || 'unknown']: response }));
       // Placeholder for actual AI feedback logic
       console.log('Submitting audio for AI feedback...');
@@ -307,87 +308,14 @@ export const RepeatSentence: React.FC<PracticeTestsProps> = ({ user }) => {
     updatedAt: q.updatedAt
   }));
 
-  // Feedback display component
-  // const FeedbackDisplay = (feedback:any) => {
-  //   if (!showFeedback || !audioRecording.recordedBlob) return null;
-
-  //   if (!feedback.feedback) return null;
-  //   feedback = feedback.feedback;
-
-  //   return (
-  //     <ContentDisplay
-  //       title="AI Feedback Results"
-  //       content={
-  //         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-  //           <Box sx={{ textAlign: 'center', p: 4, bgcolor: 'primary.light', borderRadius: 2 }}>
-  //             <Box sx={{ fontSize: '48px', fontWeight: 'bold', color: 'primary.main' }}>
-  //               {feedback?.overallScore}
-  //             </Box>
-  //             <Box sx={{ color: 'text.secondary' }}>Overall Score</Box>
-  //           </Box>
-
-  //           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2 }}>
-  //             <Box sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Pronunciation</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{feedback.scores.final.Pronunciation}</Box>
-  //             </Box>
-  //             <Box sx={{ p: 2, bgcolor: 'warning.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Fluency</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{feedback.scores.final.Fluency}</Box>
-  //             </Box>
-  //             <Box sx={{ p: 2, bgcolor: 'secondary.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Content</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{feedback.scores.final.Content}</Box>
-  //             </Box>
-  //           </Box>
-
-  //           <Box>
-  //             <Box sx={{ fontWeight: 'medium', mb: 1, color: 'success.main' }}>✅ Strengths:</Box>
-  //             {feedback.feedback.map((item:any, index:any) => (
-  //               <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
-  //                 <Box sx={{ color: 'success.main' }}>•</Box>
-  //                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
-  //               </Box>
-  //             ))}
-  //           </Box>
-
-  //           <Box>
-  //             <Box sx={{ fontWeight: 'medium', mb: 1, color: 'warning.main' }}>💡 Areas for Improvement:</Box>
-  //             {feedback.improvements.map((item:any, index:any) => (
-  //               <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
-  //                 <Box sx={{ color: 'warning.main' }}>•</Box>
-  //                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
-  //               </Box>
-  //             ))}
-  //           </Box>
-
-  //           {/* {currentQuestionIndex < repeatSentenceQuestions.length - 1 && (
-  //             <Box sx={{ textAlign: 'center', mt: 2 }}>
-  //               <button
-  //                 onClick={handleNextQuestion}
-  //                 style={{
-  //                   padding: '12px 24px',
-  //                   backgroundColor: '#1976d2',
-  //                   color: 'white',
-  //                   border: 'none',
-  //                   borderRadius: '8px',
-  //                   fontSize: '16px',
-  //                   cursor: 'pointer'
-  //                 }}
-  //               >
-  //                 Next Question →
-  //               </button>
-  //             </Box>
-  //           )} */}
-  //         </Box>
-  //       }
-  //       showMetadata={false}
-  //     />
-  //   );
-  // };
-
   return (
     <GradientBackground>
+       {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+              <Typography variant="h6">Loading questions...</Typography>
+            </Box>
+            ) : (
+            <>
       <StageGoalBanner />
       
       <PracticeCardWithInstructionsPopover
@@ -495,56 +423,6 @@ export const RepeatSentence: React.FC<PracticeTestsProps> = ({ user }) => {
         <FeedbackDisplay
           feedback={scores[currentQuestion?.id || '']}
         />
-         {/* <Box sx={{ mt: 2 }}>
-          {Object.entries(scores).map(([questionId, scoreData]: [string, any]) => {
-            if (questionId.toString() === currentQuestion?.id.toString()) {
-              return (
-                <StyledCard key={questionId}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Score Analysis
-                    </Typography>
-                    <Stack spacing={2}>
-                      {scoreData.transcribedText && (
-                        <Box>
-                          <Typography variant="subtitle2" color="primary">
-                            Your Speech:
-                          </Typography>
-                          <Typography variant="body2">
-                            {scoreData.transcribedText}
-                          </Typography>
-                        </Box>
-                      )}
-                      {scoreData?.scores?.final && (
-                        <Box>
-                          <Typography variant="subtitle2" color="primary">
-                            Content Score:
-                          </Typography>
-                          <Typography variant="body1">
-                            {scoreData.scores?.final.Content}
-                          </Typography>
-                          <Typography variant="subtitle2" color="primary">
-                            Fluency Score:
-                          </Typography>
-                          <Typography variant="body1">
-                            {scoreData.scores?.final.Fluency}
-                          </Typography>
-                          <Typography variant="subtitle2" color="primary">
-                            Pronunciation Score:
-                          </Typography>
-                          <Typography variant="body1">
-                            {scoreData.scores?.final.Pronunciation}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Stack>
-                  </CardContent>
-                </StyledCard>
-              );
-            }
-            return null;
-          })}
-        </Box> */}
 
         {/* Navigation Section Integrated */}
         <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid #e0e0e0' }}>
@@ -637,6 +515,8 @@ export const RepeatSentence: React.FC<PracticeTestsProps> = ({ user }) => {
           <Button onClick={() => setShowAttempts(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+      </>
+      )}
     </GradientBackground>
   );
 };

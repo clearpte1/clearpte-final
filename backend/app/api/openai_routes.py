@@ -208,7 +208,7 @@ def combine_scores(computed: Optional[int], llm: Optional[int]) -> Optional[int]
         return llm
     return int(round((computed + llm) / 2))
 
-@router.post("/compare-audio")
+@router.post("/read-aloud")
 async def compare_audio(
     audio: UploadFile,
     referenceText: str = Form(...)
@@ -311,4 +311,108 @@ async def compare_audio(
             if tmp_file_path and os.path.exists(tmp_file_path):
                 os.remove(tmp_file_path)
         except Exception:
+            pass
+
+@router.post("/repeat-sentence")
+async def compare_audio(
+    audio: UploadFile,
+    referenceText: str = Form(...)
+):
+    if not referenceText:
+        raise HTTPException(status_code=400, detail="Reference text is required")
+    if not audio:
+        raise HTTPException(status_code=400, detail="Audio file is required")
+
+    tmp_file_path = None
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp_file:
+            tmp_file.write(await audio.read())
+            tmp_file_path = tmp_file.name
+        transcription = openai_client.audio.transcriptions.create(
+            model="whisper-1",
+            file=open(tmp_file_path, "rb")
+        )
+        transcribed_text = getattr(transcription, "text", None) or transcription.get("text") or ""
+
+        ref_tokens = tokenize(referenceText)
+        trans_tokens = tokenize(transcribed_text)
+        token_report = build_token_analysis(ref_tokens, trans_tokens)
+        repeat_sentence_prompt = f"""
+        You are a strict PTE “Repeat Sentence” grader. Compare an Original sentence to a User sentence and produce counts only.
+
+        Rules
+        • Compare words in order (case-insensitive; ignore punctuation).
+        • Good = exact word match in form/meaning.
+        • Average = small form variation (plural/singular, simple morphology).
+        • Bad/Missed = wrong word, synonym, or omitted.
+        • Extra user words count as Bad/Missed.
+        • No percentages, no JSON, no explanations.
+        • Output EXACTLY these four lines:
+
+        Original: "{referenceText}"
+        User: "{transcribed_text}"
+
+        Total: {{X}} words
+        Good: {{Y}} words
+        Average: {{Z}} word(s)
+        Bad/Missed: {{W}} word(s)
+        """
+
+        rs_resp = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": repeat_sentence_prompt}],
+            temperature=0,
+            max_tokens=100
+        )
+
+        repeat_sentence_result = rs_resp.choices[0].message.content.strip()
+
+        scoring_prompt = f"""
+        You are a strict PTE Speaking evaluator. Score the user's Repeat Sentence response.
+
+        Reference Text:
+        "{referenceText}"
+
+        User Response:
+        "{transcribed_text}"
+
+        Return STRICT JSON only:
+        {{
+            "Content": [0-90],
+            "Fluency": [0-90],
+            "Pronunciation": [0-90],
+            "Overall": [0-90]
+        }}
+        """
+
+        score_resp = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": scoring_prompt}],
+            temperature=0,
+            max_tokens=100
+        )
+
+        import json
+        try:
+            score_json = json.loads(score_resp.choices[0].message.content.strip())
+        except:
+            raise HTTPException(status_code=500, detail="LLM returned invalid JSON for scoring")
+
+        result = {
+            "transcribedText": transcribed_text,
+            "referenceText": referenceText,
+            "singleLineFeedback": repeat_sentence_result,
+            "scores": score_json
+        }
+
+        return JSONResponse(result)
+
+    except Exception as e:
+        print("Error processing audio:", e)
+        raise HTTPException(status_code=500, detail=f"Failed to process audio: {e}")
+    finally:
+        try:
+            if tmp_file_path and os.path.exists(tmp_file_path):
+                os.remove(tmp_file_path)
+        except:
             pass

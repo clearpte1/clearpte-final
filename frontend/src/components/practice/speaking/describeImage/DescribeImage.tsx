@@ -206,6 +206,7 @@ const DescribeImage: React.FC = () => {
   useEffect(() => {
     async function fetchQuestions() {
       try {
+        setLoading(true);
         let response = await fetchDescribeImageQuestions();
         console.log(response);
         response = response.map((q: any) => ({
@@ -224,6 +225,8 @@ const DescribeImage: React.FC = () => {
         setQuestions([]);
         setCurrentQuestion(null);
         setQuestionNumber(0);
+      } finally {
+        setLoading(false);
       }
     }
     fetchQuestions();
@@ -335,7 +338,6 @@ const DescribeImage: React.FC = () => {
     }
 
     try {
-      setLoading(true);
       const formData = new FormData();
       formData.append('audio', audioRecording.recordedBlob);
       formData.append("image_url", currentQuestion?.image || '');
@@ -349,11 +351,7 @@ const DescribeImage: React.FC = () => {
     } catch (error) {
       console.error('Error submitting recording:', error);
       alert('There was an error submitting your recording. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-
-
+    } 
   };
 
   const handleRedo = () => {
@@ -372,91 +370,15 @@ const DescribeImage: React.FC = () => {
     setShowAttempts(true);
   };
 
-  // // Feedback display component
-  // const FeedbackDisplay = () => {
-  //   if (!showFeedback || !audioRecording.recordedBlob) return null;
-
-  //   return (
-  //     <ContentDisplay
-  //       title="AI Feedback Results"
-  //       content={
-  //         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-  //           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr 1fr' }, gap: 2 }}>
-  //             <Box sx={{ p: 2, bgcolor: 'primary.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Overall</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{mockFeedback.overallScore}</Box>
-  //             </Box>
-  //             <Box sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Pronunciation</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{mockFeedback.pronunciation}</Box>
-  //             </Box>
-  //             <Box sx={{ p: 2, bgcolor: 'warning.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Fluency</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{mockFeedback.fluency}</Box>
-  //             </Box>
-  //             <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1, textAlign: 'center' }}>
-  //               <Box sx={{ fontWeight: 'medium' }}>Content</Box>
-  //               <Box sx={{ fontSize: '24px', fontWeight: 'bold' }}>{mockFeedback.content}</Box>
-  //             </Box>
-  //           </Box>
-
-  //           <Box sx={{ p: 3, bgcolor: 'grey.50', borderRadius: 1 }}>
-  //             <Box sx={{ fontWeight: 'medium', mb: 2 }}>Content Elements Covered:</Box>
-  //             {mockFeedback.contentElements.map((item, index) => (
-  //               <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-  //                 <Box sx={{ color: 'success.main' }}>✓</Box>
-  //                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
-  //               </Box>
-  //             ))}
-  //           </Box>
-
-  //           <Box>
-  //             <Box sx={{ fontWeight: 'medium', mb: 1, color: 'success.main' }}>✅ Strengths:</Box>
-  //             {mockFeedback.feedback.map((item, index) => (
-  //               <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
-  //                 <Box sx={{ color: 'success.main' }}>•</Box>
-  //                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
-  //               </Box>
-  //             ))}
-  //           </Box>
-
-  //           <Box>
-  //             <Box sx={{ fontWeight: 'medium', mb: 1, color: 'warning.main' }}>💡 Areas for Improvement:</Box>
-  //             {mockFeedback.improvements.map((item, index) => (
-  //               <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
-  //                 <Box sx={{ color: 'warning.main' }}>•</Box>
-  //                 <Box sx={{ fontSize: '14px' }}>{item}</Box>
-  //               </Box>
-  //             ))}
-  //           </Box>
-
-  //           {currentQuestionIndex < questions.length - 1 && (
-  //             <Box sx={{ textAlign: 'center', mt: 2 }}>
-  //               <button
-  //                 onClick={handleNextQuestion}
-  //                 style={{
-  //                   padding: '12px 24px',
-  //                   backgroundColor: '#1976d2',
-  //                   color: 'white',
-  //                   border: 'none',
-  //                   borderRadius: '8px',
-  //                   fontSize: '16px',
-  //                   cursor: 'pointer'
-  //                 }}
-  //               >
-  //                 Next Question →
-  //               </button>
-  //             </Box>
-  //           )}
-  //         </Box>
-  //       }
-  //       showMetadata={false}
-  //     />
-  //   );
-  // };
 
   return (
     <GradientBackground>
+       {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+              <Typography variant="h6">Loading questions...</Typography>
+            </Box>
+            ) : (
+            <>
       <StageGoalBanner />
 
       <PracticeCardWithInstructionsPopover
@@ -671,6 +593,8 @@ const DescribeImage: React.FC = () => {
           <Button onClick={() => setShowAttempts(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+       </>
+      )}
     </GradientBackground>
   );
 };

@@ -23,7 +23,7 @@ import TopicSelectionDrawer from '../../../common/TopicSelectionDrawer';
 import { LectureTopic, UserAttempt } from './ReTellLeactureType';
 import { useFloatingSearch } from '../../../hooks/useFloatingSearch';
 import { fetchRetellLectureQuestions } from '../../../../services/speaking/fetchQuestions';
-import { compareAudio, reTellLectureSubmitAnswers } from '../../../../services/speaking/submitAnswers';
+import { reTellLectureSubmitAnswers } from '../../../../services/speaking/submitAnswers';
 import FeedbackDisplay from '../common/feedback';
 
 interface PracticeTestsProps {
@@ -326,8 +326,8 @@ export const ReTellLeacture: React.FC<PracticeTestsProps> = ({ user }) => {
 
     try {
       const formData = new FormData();
-      formData.append('audio', audioRecording.recordedBlob);
-      formData.append('referenceText', selectedTopic?.audioText || '');
+      formData.append("audio", audioRecording.recordedBlob);
+      formData.append("referenceDescription", selectedTopic?.audioText || '');
       const response = await reTellLectureSubmitAnswers(formData);
       if (!response) throw new Error('Failed to process recording');
       setScores(prev => ({ ...prev, [selectedTopic?.id || 'unknown']: response }));

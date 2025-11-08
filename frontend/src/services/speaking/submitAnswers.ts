@@ -3,9 +3,23 @@ import { data } from "react-router-dom";
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
-export const compareAudio = async (data: any): Promise<any> => {
+export const ReadAloudSubmitAnswers = async (data: any): Promise<any> => {
   try {
-    const response = await axios.post(`${API_BASE}/compare/compare-audio`, data, {
+    const response = await axios.post(`${API_BASE}/compare/read-aloud`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error comparing audio:", error);
+    throw error;
+  }
+};
+
+export const RepeatSentenceSubmitAnswers = async (data: any): Promise<any> => {
+  try {
+    const response = await axios.post(`${API_BASE}/compare/repeat-sentence`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

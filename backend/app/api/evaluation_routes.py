@@ -128,10 +128,9 @@ async def evaluate_from_image(
         )
         user_speech = getattr(transcription, "text", None) or transcription.get("text") or ""
 
-        # --- 3️⃣ Analyze image context using GPT-4o (Vision) ---
         image_analysis_prompt = """
 You are an expert visual analyst. Analyze this image and summarize its visual meaning and key elements in 2-3 sentences.
-Focus on what it shows (like charts, dashboards, people, etc.) and its general context.
+Focus on what it shows and its general context.
 """
         image_analysis_resp = openai_client.chat.completions.create(
             model="gpt-4o-mini",
@@ -148,34 +147,61 @@ Focus on what it shows (like charts, dashboards, people, etc.) and its general c
         )
         image_summary = image_analysis_resp.choices[0].message.content.strip()
 
-        # --- 4️⃣ Evaluate user’s speech vs reference & image context ---
         evaluation_prompt = f"""
-You are an English speaking examiner.
-You are given:
-- The analyzed image context: "{image_summary}"
-- The correct description: "{referenceDescription}"
-- The student's spoken description (transcribed): "{user_speech}"
+        You are a PTE Describe Image evaluator.
 
-Evaluate how well the student described the image compared to the correct description and image content.
+        Do NOT provide a model answer. The user has already spoken.
+        Your job is to evaluate their spoken description in a friendly, lenient, and supportive manner.
 
-Return STRICT JSON with:
-{{
-  "scores": {{
-    "Content": [0-100],
-    "Fluency": [0-100],
-    "Pronunciation": [0-100]
-  }},
-  "feedback": [
-    "positive comment 1",
-    "positive comment 2"
-  ],
-  "improvements": [
-    "improvement tip 1",
-    "improvement tip 2"
-  ]
-}}
-Only return valid JSON.
-"""
+        You are given:
+        - The analyzed image context: "{image_summary}"
+        - The correct description: "{referenceDescription}"
+        - The student's spoken description (transcribed): "{user_speech}"
+
+        Evaluate how well the student described the image compared to the important elements in the image and the reference description.
+
+        Scoring rules (lenient):
+        - Content /90 (be generous; reward effort and partial information)
+        - Fluency /90 (focus on smoothness; do not judge minor pauses)
+        - Pronunciation /90 (be kind; only reduce score for major clarity issues)
+        - Scores should generally lean higher unless the response is extremely short.
+        - Higher marks for effort
+        - Encourage improvement
+        - Do not judge harsh mistakes
+        - Only give short correction suggestions (2–3 points)
+        - Tell me 1 sentence on how to improve next time
+
+
+        Provide supportive feedback:
+        - Highlight strengths.
+        - Give 2–3 short, simple improvement suggestions.
+        - Add one friendly “next time” tip.
+
+        Return STRICT JSON with:
+        {{
+        "scores": {{
+            "Content": [0-90],
+            "Fluency": [0-90],
+            "Pronunciation": [0-90]
+        }},
+        "feedback": [
+            "positive comment 1",
+            "positive comment 2"
+        ],
+        "improvements": [
+            "improvement tip 1",
+            "improvement tip 2",
+            "next-time friendly guidance"
+        ]
+        }}
+
+        Rules:
+        - Be friendly, encouraging, and positive.
+        - Do NOT rewrite the description.
+        - Do NOT add explanations.
+        - Only output valid JSON and nothing else.
+        """
+
 
         llm_resp = openai_client.chat.completions.create(
             model="gpt-4o",
@@ -195,7 +221,9 @@ Only return valid JSON.
         llm_text = llm_resp.choices[0].message.content.strip()
 
         try:
-            llm_json = json.loads(llm_text)
+            clean_json = re.sub(r"^```(?:json)?", "", llm_text, flags=re.IGNORECASE | re.MULTILINE)
+            clean_json = re.sub(r"```$", "", clean_json, flags=re.MULTILINE).strip()
+            llm_json = json.loads(clean_json)
         except json.JSONDecodeError:
             llm_json = {
                 "scores": {"Content": None, "Fluency": None, "Pronunciation": None},
@@ -209,14 +237,12 @@ Only return valid JSON.
             "image_summary": image_summary,
             "evaluation": llm_json,
             "scores": {
-                "final" : {
-                    "Content": llm_json["scores"].get("Content"),
-                    "Fluency": llm_json["scores"].get("Fluency"),
-                    "Pronunciation": llm_json["scores"].get("Pronunciation"),
-                }
+                "Content": llm_json["scores"].get("Content"),
+                "Fluency": llm_json["scores"].get("Fluency"),
+                "Pronunciation": llm_json["scores"].get("Pronunciation"),
             },
             "feedback": llm_json.get("feedback", []),
-            "improvements": llm_json.get("improvements", [])
+            "corrections": llm_json.get("improvements", [])
         }
 
         return JSONResponse(result)
@@ -233,7 +259,7 @@ Only return valid JSON.
 
 @router.post("/evaluate-retell")
 async def evaluate_retell(
-    audio: UploadFile,
+    audio: UploadFile = File(...),
     referenceDescription: str = Form(...)
 ):
 
@@ -252,43 +278,51 @@ async def evaluate_retell(
         user_speech = transcription.text.strip()
 
         evaluation_prompt = f"""
-        You are an English-speaking examiner evaluating a student's spoken retelling of a lecture.
+        You are a PTE Speaking evaluator.  
+        Use an easy-mode, supportive, gentle scoring style.
+
         ### Lecture Summary:
         "{referenceDescription}"
+
         ### Student's Retelling (Transcribed):
         "{user_speech}"
-        Evaluate according to:
-        1. **Content (0–100)** – How well the retelling matches the meaning and details of the lecture.
-        2. **Fluency (0–100)** – Smoothness, coherence, and language flow.
-        3. **Pronunciation (0–100)** – Clarity and naturalness of speech (approximate via transcription).
 
-        Provide:
-        - Numeric scores (0–100) for each category.
-        - A short feedback message for each area.
-        - Three improvement suggestions.
-        - A short overall summary.
+        Evaluate ONLY:
+        • Content (main idea + key points) — score out of 90  
+        • Pronunciation (clarity, stress, intonation) — score out of 90  
+        • Fluency (flow, pace, hesitation control) — score out of 90  
 
-        Respond ONLY in JSON, exactly as shown below:
+        Be positive. Do NOT penalize heavily for grammar.  
+        Keep feedback simple, friendly, and encouraging.
+
+        Respond ONLY in the JSON structure below:
 
         {{
             "scores": {{
-                "Content": <0–100>,
-                "Fluency": <0–100>,
-                "Pronunciation": <0–100>
+                "Content": <0–90>,
+                "Fluency": <0–90>,
+                "Pronunciation": <0–90>
             }},
-            "feedback": {{
-                "Content": "<feedback>",
-                "Fluency": "<feedback>",
-                "Pronunciation": "<feedback>"
-            }},
+            "feedback": {
+                "Content": "<friendly feedback>",
+                "Fluency": "<friendly feedback>",
+                "Pronunciation": "<friendly feedback>"
+            },
             "improvements": [
-                "<suggestion 1>",
-                "<suggestion 2>",
-                "<suggestion 3>"
+                "<simple suggestion 1>",
+                "<simple suggestion 2>",
+                "<simple suggestion 3>"
             ],
-            "overallSummary": "<brief summary>"
+            "overallSummary": "<brief, positive summary>"
         }}
+
+        Rules:
+        • Keep tone soft, supportive, and motivating  
+        • Suggestions must be light and easy  
+        • No negative or harsh language  
+        • Focus on encouragement and clarity  
         """
+
         gpt_response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
