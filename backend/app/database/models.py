@@ -11,6 +11,15 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     full_name = Column(String(255))
     role = Column(String(50), default='student')
+
+class UserProfile(Base):
+    __tablename__ = "user_profile"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    target_score = Column(Integer)
+    test_date = Column(DateTime)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
     
 
 # speaking module tables

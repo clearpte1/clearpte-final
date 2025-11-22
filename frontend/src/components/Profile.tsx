@@ -1,26 +1,63 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Typography, Card, Box, Avatar, TextField, Grid } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { User } from '../types';
 import { Button } from './common/Button';
+import { userService } from '../services/userService';
 
 interface ProfileProps {
   user: User | null;
   setUser: (user: User) => void;
 }
 
+interface Profile {
+  name: string;
+  email: string;
+  targetScore: string;
+  testDate: string;
+}
+
 export const Profile = ({ user, setUser }: ProfileProps) => {
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState<any>({
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [formData, setFormData] = useState<Profile>({
     name: user?.name || '',
     email: user?.email || '',
-    targetScore: '79',
-    testDate: '2024-03-15'
+    targetScore: profile?.targetScore || '0',
+    testDate: profile?.testDate || '',
   });
+  
 
-  const handleSave = () => {
-    setUser({ ...user, ...formData });
-    setEditing(false);
+  useEffect(() => {
+    async function fetchProfile() {
+      if (!user) return;
+      const response = await userService.getUserProfile(user.id);
+      setProfile(response);
+      console.log(response); 
+    }
+    fetchProfile();
+  }, [user]);
+  
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name,
+        email: user.email,
+        targetScore: profile?.targetScore || '0',
+        testDate: profile?.testDate || '',
+      });
+    }
+  }, [user]);
+
+
+  const handleUpdateProfile = async () => {
+    try {
+      const response = await userService.updateUserProfile(user?.id || '', formData);
+      setProfile(response);
+      setEditing(false);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
   };
 
   return (
@@ -32,11 +69,11 @@ export const Profile = ({ user, setUser }: ProfileProps) => {
       <Card sx={{ p: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
           <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: 'primary.main' }}>
-            {user?.name?.charAt(0).toUpperCase()}
+            {profile?.name?.charAt(0).toUpperCase()}
           </Avatar>
           <Box>
-            <Typography variant="h5">{user?.name}</Typography>
-            <Typography color="text.secondary">{user?.email}</Typography>
+            <Typography variant="h5">{profile?.name}</Typography>
+            <Typography color="text.secondary">{profile?.email}</Typography>
           </Box>
           <Box sx={{ ml: 'auto' }}>
             <Button
@@ -75,7 +112,7 @@ export const Profile = ({ user, setUser }: ProfileProps) => {
               onChange={(e) => setFormData({ ...formData, testDate: e.target.value })}
               InputLabelProps={{ shrink: true }}
             />
-            <Button variant="contained" onClick={handleSave}>
+            <Button variant="contained" onClick={handleUpdateProfile}>
               Save Changes
             </Button>
           </Box>

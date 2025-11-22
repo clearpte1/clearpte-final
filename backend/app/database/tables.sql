@@ -351,6 +351,14 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
+create table user_profile(
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    target_score INT,
+    test_date DATE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+)
 -- User Sessions / Tokens (JWT, refresh tokens, etc.)
 CREATE TABLE user_sessions (
     id SERIAL PRIMARY KEY,
