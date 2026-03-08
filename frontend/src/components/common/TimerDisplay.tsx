@@ -36,25 +36,25 @@ const TimerDisplay: React.FC<TimerDisplayProps> = ({
   };
 
   return (
-    <Paper sx={{ 
-      p: 2, 
-      mb: 3, 
+    <Paper sx={{
+      p: 1.5,
+      mb: 2,
       bgcolor: isWarning ? '#ffebee' : '#e3f2fd',
       border: `1px solid ${isWarning ? '#f44336' : '#2196f3'}`,
       borderRadius: 2
     }}>
-      <Stack direction="row" alignItems="center" spacing={2} flexWrap="wrap">
-        <Timer sx={{ 
+      <Stack direction="row" alignItems="center" spacing={1.5} flexWrap="wrap">
+        <Timer sx={{
           color: isWarning ? '#f44336' : '#2196f3',
-          fontSize: { xs: '20px', sm: '24px' }
+          fontSize: { xs: '18px', sm: '20px' }
         }} />
-        
-        <Typography 
-          variant="h6" 
-          sx={{ 
+
+        <Typography
+          variant="h6"
+          sx={{
             fontWeight: 'bold',
             color: isWarning ? '#f44336' : '#2196f3',
-            fontSize: { xs: '16px', sm: '18px', md: '20px' }
+            fontSize: { xs: '15px', sm: '16px', md: '17px' }
           }}
         >
           Time: {formatTime(timeRemaining)}

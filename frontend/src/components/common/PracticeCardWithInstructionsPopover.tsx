@@ -20,7 +20,6 @@ export interface PracticeCardWithInstructionsPopoverProps {
   difficulty?: 'Beginner' | 'Intermediate' | 'Advanced';
   studyGuide?: boolean;
   children: React.ReactNode;
-  maxWidth?: number | string;
   padding?: number | string;
   // Instructions popover props
   instructionsConfig?: Omit<InstructionsPopoverProps, 'title'> & {
@@ -36,7 +35,6 @@ const PracticeCardWithInstructionsPopover: React.FC<PracticeCardWithInstructions
   difficulty,
   studyGuide = true,
   children,
-  maxWidth = 1200,
   padding,
   instructionsConfig
 }) => {
@@ -53,34 +51,42 @@ const PracticeCardWithInstructionsPopover: React.FC<PracticeCardWithInstructions
   };
 
   return (
-    <Card sx={{ 
-      maxWidth, 
-      mx: 'auto', 
-      mb: 3,
-      borderRadius: 3,
-      boxShadow: theme.shadows[3]
+    <Card sx={{
+      width: '100%',
+      height: 'calc(100vh - 80px)', // Account for 80px header
+      display: 'flex',
+      flexDirection: 'column',
+      borderRadius: 0,
+      bgcolor: '#1a1a1a',
+      boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      overflow: 'hidden'
     }}>
-      <CardContent sx={{ 
-        p: padding || { xs: 2, sm: 3, md: 4 }
+      <CardContent sx={{
+        p: padding || { xs: 2, sm: 2, md: 3 },
+        flex: 1,
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column'
       }}>
         {/* Header Section */}
-        <Stack 
-          direction={{ xs: 'column', sm: 'row' }} 
-          alignItems={{ xs: 'flex-start', sm: 'center' }} 
-          spacing={2} 
-          sx={{ mb: 3 }}
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          spacing={1.5}
+          sx={{ mb: 2, flexShrink: 0 }}
         >
           <Box
             sx={{
-              width: { xs: 50, sm: 55, md: 60 },
-              height: { xs: 50, sm: 55, md: 60 },
+              width: { xs: 45, sm: 50, md: 55 },
+              height: { xs: 45, sm: 50, md: 55 },
               bgcolor: '#2196f3',
               borderRadius: 2,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontSize: { xs: '14px', sm: '16px', md: '18px' },
+              fontSize: { xs: '13px', sm: '15px', md: '17px' },
               fontWeight: 'bold',
               flexShrink: 0,
               lineHeight: 1.2
@@ -90,73 +96,73 @@ const PracticeCardWithInstructionsPopover: React.FC<PracticeCardWithInstructions
           </Box>
           
           <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
-              alignItems={{ xs: 'flex-start', sm: 'center' }} 
-              spacing={2}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              spacing={1.5}
             >
-              <Typography 
-                variant="h5" 
-                sx={{ 
-                  fontWeight: 'bold', 
-                  color: '#333',
-                  fontSize: { xs: '18px', sm: '20px', md: '24px' },
-                  lineHeight: 1.3,
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 'bold',
+                  color: '#FFFFFF',
+                  fontSize: { xs: '17px', sm: '19px', md: '22px' },
+                  lineHeight: 1.2,
                   wordBreak: 'break-word'
                 }}
               >
                 {title}
               </Typography>
-              
+
               {studyGuide && (
                 <Chip label="Study Guide" color="primary" size="small" />
               )}
-              
+
               {difficulty && (
-                <Chip 
-                  label={difficulty} 
+                <Chip
+                  label={difficulty}
                   color={getDifficultyColor(difficulty)}
-                  size="small" 
+                  size="small"
                 />
               )}
             </Stack>
-            
+
             {subtitle && (
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  color: '#666', 
-                  mt: 1,
-                  fontSize: { xs: '12px', sm: '13px', md: '14px' },
-                  lineHeight: 1.5,
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#B0B0B0',
+                  mt: 0.75,
+                  fontSize: { xs: '11px', sm: '12px', md: '13px' },
+                  lineHeight: 1.4,
                   wordBreak: 'break-word'
                 }}
               >
                 {subtitle}
               </Typography>
             )}
-            
+
             {/* Instructions with Info Icon Popover */}
             {(instructions || instructionsConfig?.sections) && (
-              <Stack 
-                direction="row" 
-                alignItems="center" 
+              <Stack
+                direction="row"
+                alignItems="center"
                 spacing={1}
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.75 }}
               >
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: '#666', 
-                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
-                    lineHeight: 1.5,
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#B0B0B0',
+                    fontSize: { xs: '11px', sm: '12px', md: '13px' },
+                    lineHeight: 1.4,
                     wordBreak: 'break-word',
                     flexGrow: 1
                   }}
                 >
                   {instructions}
                 </Typography>
-                
+
                 {instructionsConfig?.sections && (
                   <InstructionsPopover
                     title={instructionsConfig.title || `${title} Instructions`}
@@ -172,10 +178,12 @@ const PracticeCardWithInstructionsPopover: React.FC<PracticeCardWithInstructions
           </Box>
         </Stack>
 
-        <Divider sx={{ my: 3 }} />
+        <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
 
-        {/* Content */}
-        {children}
+        {/* Content - Scrollable Area */}
+        <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+          {children}
+        </Box>
       </CardContent>
     </Card>
   );

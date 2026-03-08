@@ -11,3 +11,6 @@ frontend/.env
 backend/.env.example
 frontend/.env.example
 .env
+backend/app1
+backend/api1
+frontend/src1

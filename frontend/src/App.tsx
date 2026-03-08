@@ -43,6 +43,8 @@ import FloatingSearchDemo from './components/common/FloatingSearchButton';
 import AdminDashboardNew from './components/admin/AdminDashboardNew';
 import EnhancedAdminDemo from './components/admin/EnhancedAdminDemo';
 import { GlobalStateContext, initialState, reducer } from './store/context';
+import CoursePage from './components/course/CoursePage';
+import SpellingTest from './components/spelling/SpellingTest';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -240,6 +242,8 @@ const App: React.FC = () => {
               <Route path="/ai-analysis" element={isLoggedIn ? <ProgressTracking user={user} /> : <Navigate to="/" replace />} />
               <Route path="/ai-study-plan" element={isLoggedIn ? <Dashboard user={user} /> : <Navigate to="/" replace />} />
               <Route path="/mock-tests" element={isLoggedIn ? <PracticeTests user={user} /> : <Navigate to="/" replace />} />
+              <Route path="/course" element={isLoggedIn ? <CoursePage /> : <Navigate to="/" replace />} />
+              <Route path="/spelling-test" element={isLoggedIn ? <SpellingTest /> : <Navigate to="/" replace />} />
               <Route path="/downloads" element={isLoggedIn ? <StudyMaterials user={user} /> : <Navigate to="/" replace />} />
 
               {/* Demo Route */}

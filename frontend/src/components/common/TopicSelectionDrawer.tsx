@@ -170,7 +170,7 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
       PaperProps={{
         sx: {
           width: { xs: '100%', sm: 500, md: 600 },
-          bgcolor: '#f8f9fa',
+          bgcolor: '#0a0a0a',
           zIndex: 1200
         },
         style: { width: isMobile ? '95%' : '60%' }
@@ -186,7 +186,7 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
     >
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
-        <Box sx={{ bgcolor: 'white', borderBottom: '1px solid #e0e0e0' }}>
+        <Box sx={{ bgcolor: '#1a1a1a', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           {/* Top Header with Close Button */}
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2 }}>
             <Stack direction="row" alignItems="center" spacing={2}>
@@ -212,17 +212,17 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
               >
                 {title === 'lecture' ? 'RL' : 'ASQ'}
               </Box>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFFFFF' }}>
                 {title}
               </Typography>
             </Stack>
-            <IconButton 
-              onClick={onClose} 
-              sx={{ 
-                color: theme.palette.text.secondary,
+            <IconButton
+              onClick={onClose}
+              sx={{
+                color: '#B0B0B0',
                 padding: '6px',
                 '&:hover': {
-                  backgroundColor: theme.palette.grey[100],
+                  backgroundColor: 'rgba(255,255,255,0.1)',
                 }
               }}
             >
@@ -241,17 +241,21 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search sx={{ 
-                      color: theme.palette.text.secondary,
+                    <Search sx={{
+                      color: '#B0B0B0',
                       fontSize: 20
                     }} />
                   </InputAdornment>
                 ),
               }}
               sx={{
-                bgcolor: 'white',
+                bgcolor: '#2a2a2a',
                 '& .MuiOutlinedInput-root': {
                   height: 40,
+                  color: '#FFFFFF',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  },
                   '&:hover .MuiOutlinedInput-notchedOutline': {
                     borderColor: theme.palette.primary.main,
                   },
@@ -263,7 +267,7 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 '& .MuiInputBase-input': {
                   fontSize: '0.875rem',
                   '&::placeholder': {
-                    color: theme.palette.text.secondary,
+                    color: '#B0B0B0',
                     opacity: 0.8,
                   },
                 },
@@ -272,11 +276,11 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
           </Box>
 
           {/* Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs 
-              value={selectedTab} 
-              onChange={handleTabChange} 
-              sx={{ 
+          <Box sx={{ borderBottom: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+            <Tabs
+              value={selectedTab}
+              onChange={handleTabChange}
+              sx={{
                 px: 2,
                 minHeight: 42,
                 '& .MuiTabs-indicator': {
@@ -285,33 +289,33 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 }
               }}
             >
-              <Tab 
-                label="All" 
-                sx={{ 
+              <Tab
+                label="All"
+                sx={{
                   textTransform: 'none',
                   fontSize: '0.875rem',
                   fontWeight: 500,
-                  color: theme.palette.text.secondary,
+                  color: '#B0B0B0',
                   minHeight: 42,
                   '&.Mui-selected': {
                     color: theme.palette.primary.main,
                     fontWeight: 600
                   }
-                }} 
+                }}
               />
-              <Tab 
-                label="Recent" 
-                sx={{ 
+              <Tab
+                label="Recent"
+                sx={{
                   textTransform: 'none',
                   fontSize: '0.875rem',
                   fontWeight: 500,
-                  color: theme.palette.text.secondary,
+                  color: '#B0B0B0',
                   minHeight: 42,
                   '&.Mui-selected': {
                     color: theme.palette.primary.main,
                     fontWeight: 600
                   }
-                }} 
+                }}
               />
             </Tabs>
           </Box>
@@ -323,16 +327,45 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 value={filters.new}
                 onChange={(e) => handleFilterChange('new', e.target.value)}
                 displayEmpty
-                sx={{ 
+                sx={{
                   height: '32px',
-                  bgcolor: filters.new !== 'All' ? `${theme.palette.primary.light}20` : 'white',
-                  '& .MuiSelect-select': { 
-                    py: 0.5, 
+                  bgcolor: filters.new !== 'All' ? `${theme.palette.primary.light}40` : '#2a2a2a',
+                  color: '#FFFFFF',
+                  '& .MuiSelect-select': {
+                    py: 0.5,
                     fontSize: '0.813rem',
                     fontWeight: 500
                   },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.3)',
+                  },
                   '&:hover': {
-                    bgcolor: filters.new !== 'All' ? `${theme.palette.primary.light}30` : theme.palette.grey[50]
+                    bgcolor: filters.new !== 'All' ? `${theme.palette.primary.light}50` : 'rgba(255,255,255,0.05)'
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#B0B0B0'
+                  }
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#2a2a2a',
+                      '& .MuiMenuItem-root': {
+                        color: '#FFFFFF',
+                        '&:hover': {
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: 'rgba(77, 195, 247, 0.2)',
+                          '&:hover': {
+                            bgcolor: 'rgba(77, 195, 247, 0.3)',
+                          }
+                        }
+                      }
+                    }
                   }
                 }}
               >
@@ -346,9 +379,39 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 value={filters.mark}
                 onChange={(e) => handleFilterChange('mark', e.target.value)}
                 displayEmpty
-                sx={{ 
-                  bgcolor: filters.mark !== 'All' ? '#e3f2fd' : 'white',
-                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' } 
+                sx={{
+                  height: '32px',
+                  bgcolor: filters.mark !== 'All' ? `${theme.palette.primary.light}40` : '#2a2a2a',
+                  color: '#FFFFFF',
+                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.3)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#B0B0B0'
+                  }
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#2a2a2a',
+                      '& .MuiMenuItem-root': {
+                        color: '#FFFFFF',
+                        '&:hover': {
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: 'rgba(77, 195, 247, 0.2)',
+                          '&:hover': {
+                            bgcolor: 'rgba(77, 195, 247, 0.3)',
+                          }
+                        }
+                      }
+                    }
+                  }
                 }}
               >
                 <MenuItem value="All">All Mark</MenuItem>
@@ -362,9 +425,39 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 value={filters.pracStatus}
                 onChange={(e) => handleFilterChange('pracStatus', e.target.value)}
                 displayEmpty
-                sx={{ 
-                  bgcolor: filters.pracStatus !== 'All' ? '#e3f2fd' : 'white',
-                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' } 
+                sx={{
+                  height: '32px',
+                  bgcolor: filters.pracStatus !== 'All' ? `${theme.palette.primary.light}40` : '#2a2a2a',
+                  color: '#FFFFFF',
+                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.3)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#B0B0B0'
+                  }
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#2a2a2a',
+                      '& .MuiMenuItem-root': {
+                        color: '#FFFFFF',
+                        '&:hover': {
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: 'rgba(77, 195, 247, 0.2)',
+                          '&:hover': {
+                            bgcolor: 'rgba(77, 195, 247, 0.3)',
+                          }
+                        }
+                      }
+                    }
+                  }
                 }}
               >
                 <MenuItem value="All">All Status</MenuItem>
@@ -379,9 +472,39 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 value={filters.difficulty}
                 onChange={(e) => handleFilterChange('difficulty', e.target.value)}
                 displayEmpty
-                sx={{ 
-                  bgcolor: filters.difficulty !== 'All' ? '#e3f2fd' : 'white',
-                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' } 
+                sx={{
+                  height: '32px',
+                  bgcolor: filters.difficulty !== 'All' ? `${theme.palette.primary.light}40` : '#2a2a2a',
+                  color: '#FFFFFF',
+                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.3)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#B0B0B0'
+                  }
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#2a2a2a',
+                      '& .MuiMenuItem-root': {
+                        color: '#FFFFFF',
+                        '&:hover': {
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: 'rgba(77, 195, 247, 0.2)',
+                          '&:hover': {
+                            bgcolor: 'rgba(77, 195, 247, 0.3)',
+                          }
+                        }
+                      }
+                    }
+                  }
                 }}
               >
                 <MenuItem value="All">All Difficulty</MenuItem>
@@ -396,9 +519,39 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                 value={filters.explanation}
                 onChange={(e) => handleFilterChange('explanation', e.target.value)}
                 displayEmpty
-                sx={{ 
-                  bgcolor: filters.explanation !== 'All' ? '#e3f2fd' : 'white',
-                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' } 
+                sx={{
+                  height: '32px',
+                  bgcolor: filters.explanation !== 'All' ? `${theme.palette.primary.light}40` : '#2a2a2a',
+                  color: '#FFFFFF',
+                  '& .MuiSelect-select': { py: 0.5, fontSize: '0.875rem' },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.3)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#B0B0B0'
+                  }
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor: '#2a2a2a',
+                      '& .MuiMenuItem-root': {
+                        color: '#FFFFFF',
+                        '&:hover': {
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                        },
+                        '&.Mui-selected': {
+                          bgcolor: 'rgba(77, 195, 247, 0.2)',
+                          '&:hover': {
+                            bgcolor: 'rgba(77, 195, 247, 0.3)',
+                          }
+                        }
+                      }
+                    }
+                  }
                 }}
               >
                 <MenuItem value="All">All Explanation</MenuItem>
@@ -409,25 +562,25 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
           </Stack>
 
           {/* Status Row */}
-          <Stack 
-            direction="row" 
-            alignItems="center" 
-            justifyContent="space-between" 
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
             sx={{ px: 2, pb: 2 }}
           >
-            <Typography variant="body2" sx={{ color: '#666' }}>
+            <Typography variant="body2" sx={{ color: '#B0B0B0' }}>
               Done {doneCount}, Found {foundCount} of {totalCount} Questions
             </Typography>
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               onClick={resetFilters}
-              sx={{ 
-                color: theme.palette.error.main, 
+              sx={{
+                color: theme.palette.error.main,
                 textTransform: 'none',
                 fontSize: '0.75rem',
                 padding: '4px 8px',
                 minHeight: '28px',
-                '&:hover': { 
+                '&:hover': {
                   bgcolor: `${theme.palette.error.light}20`
                 }
               }}
@@ -441,7 +594,7 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
         <Box sx={{ flex: 1, overflow: 'auto' }}>
           {questionsData.length === 0 ? (
             <Box sx={{ p: 4, textAlign: 'center' }}>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" sx={{ color: '#B0B0B0' }}>
                 No questions found matching your filters.
               </Typography>
             </Box>
@@ -454,30 +607,30 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                     sx={{
                       py: 2,
                       px: 3,
-                      borderBottom: '1px solid #f0f0f0',
-                      '&:hover': { bgcolor: '#f5f5f5' }
+                      borderBottom: '1px solid rgba(255,255,255,0.1)',
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
                     }}
                   >
                     <Stack direction="row" alignItems="center" spacing={2} sx={{ width: '100%' }}>
                       {/* Question Info */}
                       <Box sx={{ flex: 1 }}>
                         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }}>
-                          <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#333' }}>
+                          <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#FFFFFF' }}>
                             {question.questionNumber} {question.title}
                           </Typography>
-                          <Chip 
+                          <Chip
                             onClick={() => { }}
-                            label={question.questionNumber} 
-                            size="small" 
-                            sx={{ 
-                              bgcolor: theme.palette.grey[100],
-                              color: theme.palette.text.secondary,
+                            label={question.questionNumber}
+                            size="small"
+                            sx={{
+                              bgcolor: 'rgba(255,255,255,0.1)',
+                              color: '#B0B0B0',
                               height: 20,
                               fontSize: '0.688rem',
                               '& .MuiChip-label': {
                                 px: 1
                               }
-                            }} 
+                            }}
                           />
                           {question.topic.isNew && (
                             <Chip 
@@ -498,7 +651,7 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                             />
                           )}
                         </Stack>
-                        <Typography variant="body2" sx={{ color: '#666', fontSize: '0.875rem', mb: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: '#B0B0B0', fontSize: '0.875rem', mb: 0.5 }}>
                           {question.title}
                         </Typography>
                         <Stack direction="row" spacing={1}>
@@ -530,37 +683,37 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
                         variant="outlined"
                         sx={{
                           height: '28px',
-                          bgcolor: question.status === 'Done' ? 
-                            `${theme.palette.success.light}20` : 
-                            question.status === 'In Progress' ? 
-                            `${theme.palette.warning.light}20` : 
-                            theme.palette.grey[50],
-                          color: question.status === 'Done' ? 
-                            theme.palette.success.main : 
-                            question.status === 'In Progress' ? 
-                            theme.palette.warning.main : 
-                            theme.palette.text.secondary,
-                          borderColor: question.status === 'Done' ? 
-                            theme.palette.success.main : 
-                            question.status === 'In Progress' ? 
-                            theme.palette.warning.main : 
-                            theme.palette.grey[300],
+                          bgcolor: question.status === 'Done' ?
+                            `${theme.palette.success.light}30` :
+                            question.status === 'In Progress' ?
+                            `${theme.palette.warning.light}30` :
+                            'rgba(255,255,255,0.05)',
+                          color: question.status === 'Done' ?
+                            theme.palette.success.main :
+                            question.status === 'In Progress' ?
+                            theme.palette.warning.main :
+                            '#B0B0B0',
+                          borderColor: question.status === 'Done' ?
+                            theme.palette.success.main :
+                            question.status === 'In Progress' ?
+                            theme.palette.warning.main :
+                            'rgba(255,255,255,0.2)',
                           textTransform: 'none',
                           fontSize: '0.75rem',
                           minWidth: 70,
                           py: '2px',
                           fontWeight: 500,
-                          '&:hover': { 
-                            bgcolor: question.status === 'Done' ? 
-                              `${theme.palette.success.light}30` : 
-                              question.status === 'In Progress' ? 
-                              `${theme.palette.warning.light}30` : 
-                              theme.palette.grey[100],
-                            borderColor: question.status === 'Done' ? 
-                              theme.palette.success.main : 
-                              question.status === 'In Progress' ? 
-                              theme.palette.warning.main : 
-                              theme.palette.grey[400]
+                          '&:hover': {
+                            bgcolor: question.status === 'Done' ?
+                              `${theme.palette.success.light}40` :
+                              question.status === 'In Progress' ?
+                              `${theme.palette.warning.light}40` :
+                              'rgba(255,255,255,0.1)',
+                            borderColor: question.status === 'Done' ?
+                              theme.palette.success.main :
+                              question.status === 'In Progress' ?
+                              theme.palette.warning.main :
+                              'rgba(255,255,255,0.3)'
                           }
                         }}
                       >
@@ -575,13 +728,13 @@ const TopicSelectionDrawer: React.FC<TopicSelectionDrawerProps> = ({ open, onClo
         </Box>
 
         {/* Footer */}
-        <Box sx={{ 
-          bgcolor: 'white', 
-          borderTop: '1px solid #e0e0e0',
+        <Box sx={{
+          bgcolor: '#1a1a1a',
+          borderTop: '1px solid rgba(255,255,255,0.1)',
           p: 2,
           textAlign: 'center'
         }}>
-          <Typography variant="caption" sx={{ color: '#666' }}>
+          <Typography variant="caption" sx={{ color: '#B0B0B0' }}>
             Showing {foundCount} of {totalCount} questions
           </Typography>
         </Box>

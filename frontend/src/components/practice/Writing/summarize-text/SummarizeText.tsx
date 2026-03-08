@@ -371,22 +371,22 @@ const SummarizeText = ({ user }:SummarizeTextProps) => {
           title="Your Response:"
           content={
             <Box>
-              <Stack 
-                direction={{ xs: 'column', sm: 'row' }} 
-                alignItems={{ xs: 'flex-start', sm: 'center' }} 
-                justifyContent="space-between" 
-                sx={{ mb: 2 }}
-                spacing={{ xs: 1, sm: 0 }}
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                alignItems={{ xs: 'flex-start', sm: 'center' }}
+                justifyContent="space-between"
+                sx={{ mb: 1.5 }}
+                spacing={{ xs: 0.75, sm: 0 }}
               >
-                <Typography variant="h6" sx={{ color: '#333' }}>
+                <Typography variant="h6" sx={{ color: '#333', fontSize: { xs: '14px', sm: '15px', md: '16px' } }}>
                   Summary (25-50 words):
                 </Typography>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+                <Typography
+                  variant="body2"
+                  sx={{
                     color: getWordCountColor(),
                     fontWeight: 'bold',
-                    fontSize: '16px'
+                    fontSize: { xs: '14px', sm: '15px' }
                   }}
                 >
                   Word Count: {wordCount}
@@ -394,7 +394,7 @@ const SummarizeText = ({ user }:SummarizeTextProps) => {
               </Stack>
               
               {wordCount > 0 && (wordCount < 25 || wordCount > 50) && (
-                <Alert severity="warning" sx={{ mb: 2 }}>
+                <Alert severity="warning" sx={{ mb: 1.5 }}>
                   Your summary must be between 25 and 50 words. Current count: {wordCount}
                 </Alert>
               )}
@@ -402,14 +402,14 @@ const SummarizeText = ({ user }:SummarizeTextProps) => {
               <TextField
                 fullWidth
                 multiline
-                rows={6}
+                rows={5}
                 value={userResponse}
                 onChange={handleResponseChange}
                 placeholder="Type your summary here..."
                 disabled={isSubmitted || timer.timeRemaining === 0}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    fontSize: '16px',
+                    fontSize: { xs: '14px', sm: '15px' },
                     lineHeight: 1.6,
                   },
                 }}
@@ -430,8 +430,8 @@ const SummarizeText = ({ user }:SummarizeTextProps) => {
 
         {/* Score Display */}
         {score !== null && (
-          <Alert severity={score >= 70 ? 'success' : score >= 50 ? 'warning' : 'error'} sx={{ mb: 3 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
+          <Alert severity={score >= 70 ? 'success' : score >= 50 ? 'warning' : 'error'} sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ mb: 0.75 }}>
               Score: {score}/100
             </Typography>
             <Typography variant="body2">
@@ -450,7 +450,7 @@ const SummarizeText = ({ user }:SummarizeTextProps) => {
         />
 
         {/* Navigation Section Integrated */}
-        <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid #e0e0e0' }}>
+        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
           <NavigationSection
             onSearch={handleSearch}
             onPrevious={handlePrevious}
@@ -476,9 +476,9 @@ const SummarizeText = ({ user }:SummarizeTextProps) => {
         onTryAgain={handleRedo}
         customContent={
           currentResult && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>Summary Analysis:</Typography>
-              <Stack spacing={2}>
+            <Box sx={{ mt: 1.5 }}>
+              <Typography variant="h6" sx={{ mb: 1.5 }}>Summary Analysis:</Typography>
+              <Stack spacing={1.5}>
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Word Count:</Typography>
                   <Typography variant="body2" color={wordCount >= 25 && wordCount <= 50 ? 'success.main' : 'error.main'}>

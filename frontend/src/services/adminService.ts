@@ -45,6 +45,74 @@ export class AdminService {
       `✅ CREATE Question - Module: ${module}, SubModule: ${subModule}`,
       questionData
     );
+    const selectedModule = module +"-"+ subModule
+    var uploadExcelRecordsService = new UploadExcelRecordsService();
+
+    switch (selectedModule) {
+      case "Speaking-read-aloud":
+      await uploadExcelRecordsService.uploadReadAloudRecords([questionData]);
+      break;
+      case "Speaking-repeat-sentence":
+      console.log("Creating a Repeat Sentence question");
+      break;
+      case "Speaking-describe-image":
+      console.log("Creating a Describe Image question");
+      break;
+      case "Speaking-answer-short-questions":
+      console.log("Creating an Answer Short Questions question");
+      break;
+      case "Speaking-retell-lecture":
+      console.log("Creating a Retell Lecture question");
+      break;
+      case "Writing-summarize-text":
+      console.log("Creating a Summarize Text question");
+      break;
+      case "Writing-writing-essay":
+      console.log("Creating a Writing Essay question");
+      break;
+      case "Reading-fill-blanks":
+      console.log("Creating a Fill in Blanks question");
+      break;
+      case "Reading-reading-fill-blanks":
+      console.log("Creating a Reading Fill in Blanks question");
+      break;
+      case "Reading-multiple-choice-multiple":
+      console.log("Creating a Multiple Choice (Multiple) question");
+      break;
+      case "Reading-multiple-choice-single":
+      console.log("Creating a Multiple Choice (Single) question");
+      break;
+      case "Reading-reorder-paragraphs":
+      console.log("Creating a Reorder Paragraphs question");
+      break;
+      case "Listening-summarize-spoken-text":
+      console.log("Creating a Summarize Spoken Text question");
+      break;
+      case "Listening-multiple-choice-multiple":
+      console.log("Creating a Listening Multiple Choice (Multiple) question");
+      break;
+      case "Listening-multiple-choice-single":
+      console.log("Creating a Listening Multiple Choice (Single) question");
+      break;
+      case "Listening-fill-blanks":
+      console.log("Creating a Listening Fill in Blanks question");
+      break;
+      case "Listening-highlight-correct-summary":
+      console.log("Creating a Highlight Correct Summary question");
+      break;
+      case "Listening-highlight-incorrect-words":
+      console.log("Creating a Highlight Incorrect Words question");
+      break;
+      case "Listening-select-missing-word":
+      console.log("Creating a Select Missing Word question");
+      break;
+      case "Listening-write-from-dictation":
+      console.log("Creating a Write From Dictation question");
+      break;
+      default:
+      console.log("Unknown module or sub-module");
+      break;
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 800));
 

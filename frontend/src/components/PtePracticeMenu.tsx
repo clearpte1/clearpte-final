@@ -437,7 +437,7 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
   return (
     <Box>
       {isMobile ? (
-        <MenuItem onClick={handleClick} sx={{ fontSize: '0.8rem', color: '#333' }}>
+        <MenuItem onClick={handleClick} sx={{ fontSize: '0.8rem', color: '#FFFFFF' }}>
           PTE Practice
         </MenuItem>
       ) : (
@@ -445,7 +445,7 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
           color="inherit"
           onClick={handleClick}
           onMouseEnter={handleClick}
-          sx={{ fontWeight: 600, fontSize: '0.9rem', color: '#333', '&:hover': { color: '#4DB6AC', backgroundColor: 'transparent' } }}
+          sx={{ fontWeight: 600, fontSize: '1rem', color: '#FFFFFF', '&:hover': { color: 'primary.main', backgroundColor: 'rgba(77, 195, 247, 0.1)' } }}
         >
           PTE Practice
         </Button>
@@ -475,8 +475,8 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
             overflowX: 'hidden',
             overflowY: isMobile ? 'auto' : 'hidden',
             borderRadius: isMobile ? 8 : 8,
-            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-            background: '#fff',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+            background: '#1a1a1a',
             marginTop: isMobile ? 0 : '8px',
           },
         }}
@@ -497,17 +497,17 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
             sx={{
               flex: isMobile ? '0 0 100%' : '0 0 200px',
               p: isMobile ? 1 : 1.5,
-              borderRight: !isMobile && idx !== menuStructure.length - 1 ? '1px solid #e0e0e0' : 'none',
-              borderBottom: isMobile && idx !== menuStructure.length - 1 ? '1px solid #e0e0e0' : 'none',
+              borderRight: !isMobile && idx !== menuStructure.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none',
+              borderBottom: isMobile && idx !== menuStructure.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none',
               minWidth: isMobile ? '100%' : '200px',
               maxWidth: isMobile ? '100%' : '250px',
-              background: isMobile ? '#fafbfc' : 'transparent',
+              background: isMobile ? '#0a0a0a' : 'transparent',
             }}
           >
             <Typography
               variant={isMobile ? 'h6' : 'subtitle1'}
               fontWeight="bold"
-              color="#1976D2"
+              color="primary.main"
               gutterBottom
               sx={{ fontSize: isMobile ? '0.9rem' : '0.85rem', mb: 1 }}
             >
@@ -532,9 +532,9 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
                   fontSize: isMobile ? '0.75rem' : '0.7rem',
                   mb: isMobile ? 0.5 : 0,
                   whiteSpace: 'nowrap',
-                  color: '#333',
+                  color: '#FFFFFF',
                   '&:hover': {
-                    background: '#e3f2fd',
+                    background: 'rgba(77, 195, 247, 0.1)',
                   },
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -552,14 +552,15 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                   {item.hasAI && (
                     <Chip
-                      label="AI Score"
+                      label="AI"
                       size="small"
                       sx={{
-                        bgcolor: '#E8F5E9',
-                        color: '#2E7D32',
+                        bgcolor: '#4caf50',
+                        color: '#000000',
                         textDecoration: 'none',
                         fontSize: '0.6rem',
                         height: 18,
+                        fontWeight: 600,
                       }}
                     />
                   )}
@@ -568,10 +569,11 @@ const PtePracticeMenu: React.FC<PtePracticeMenuProps> = ({ isMobile: propIsMobil
                       label="Core"
                       size="small"
                       sx={{
-                        bgcolor: '#F3E5F5',
-                        color: '#6A1B9A',
+                        bgcolor: 'secondary.main',
+                        color: '#000000',
                         fontSize: '0.6rem',
                         height: 18,
+                        fontWeight: 600,
                       }}
                     />
                   )}

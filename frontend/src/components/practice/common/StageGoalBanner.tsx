@@ -5,23 +5,23 @@ import { Close } from '@mui/icons-material';
 
 const StageGoalBanner = () => {
   return (
-    <Paper 
-      sx={{ 
-        p: { xs: 1.5, sm: 2 }, 
-        bgcolor: '#fff3e0', 
+    <Paper
+      sx={{
+        p: { xs: 1.5, sm: 2 },
+        bgcolor: '#fff3e0',
         borderLeft: '4px solid #ff9800',
-        maxWidth: 1200, mx: 'auto', mb: 3 
+        maxWidth: 1200, mx: 'auto', mb: 3
       }}
     >
-      <Stack 
-        direction={{ xs: 'column', md: 'row' }} 
-        alignItems={{ xs: 'flex-start', md: 'center' }} 
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        alignItems={{ xs: 'flex-start', md: 'center' }}
         justifyContent="space-between"
         spacing={{ xs: 2, md: 0 }}
       >
-        <Stack 
-          direction="row" 
-          alignItems={{ xs: 'flex-start', sm: 'center' }} 
+        <Stack
+          direction="row"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
           spacing={2}
           sx={{ width: { xs: '100%', md: 'auto' } }}
         >

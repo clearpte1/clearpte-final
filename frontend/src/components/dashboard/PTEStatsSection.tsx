@@ -50,7 +50,7 @@ const PTEStatsSection: React.FC = () => {
       sx={{
         width: '100%',
         py: { xs: 5, md: 8 },
-        background: '#fff',
+        background: '#000000',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -61,7 +61,7 @@ const PTEStatsSection: React.FC = () => {
         sx={{
           fontWeight: 700,
           mb: { xs: 4, md: 6 },
-          color: '#22334d',
+          color: '#FFFFFF',
           textAlign: 'center',
         }}
       >
@@ -102,13 +102,13 @@ const PTEStatsSection: React.FC = () => {
             <Box>
               <Typography
                 variant="h5"
-                sx={{ fontWeight: 700, color: '#22334d', lineHeight: 1 }}
+                sx={{ fontWeight: 700, color: '#FFFFFF', lineHeight: 1 }}
               >
                 {stat.value}
               </Typography>
               <Typography
                 variant="subtitle1"
-                sx={{ color: '#22334d', fontWeight: 500 }}
+                sx={{ color: '#B0B0B0', fontWeight: 500 }}
               >
                 {stat.label}
               </Typography>

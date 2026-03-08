@@ -19,6 +19,11 @@ import RecordingSection from '../../common/RecordingSection';
 import StageGoalBanner from '../../common/StageGoalBanner';
 import TextToSpeech from '../../common/TextToSpeech';
 import TopicSelectionDrawer from '../../../common/TopicSelectionDrawer';
+// Unified Layout Components
+import UnifiedPracticeLayout from '../../common/UnifiedPracticeLayout';
+import RecordingAnswerContent from '../../common/RecordingAnswerContent';
+// Modern Layout Component
+import ModernPracticeLayout from '../../common/ModernPracticeLayout';
 // import { readAloudQuestions } from './ReadALoudMockData';
 import { ReadAloudQuestion, UserAttempt } from './ReadAloudTypes';
  import { User } from '../../../../types';
@@ -27,6 +32,14 @@ import axios from 'axios';
 import { fetchReadAloudQuestions } from '../../../../services/speaking/fetchQuestions';
 import { ReadAloudSubmitAnswers } from '../../../../services/speaking/submitAnswers';
 import FeedbackDisplay from '../common/feedback';
+
+// 🔧 LAYOUT TOGGLES
+// Set ONE of these to true, others to false:
+// - USE_MODERN_LAYOUT: New screenshot-based design (pure black background)
+// - USE_UNIFIED_LAYOUT: Unified practice layout (gradient background)
+// - Neither true: Original layout
+const USE_MODERN_LAYOUT = true;
+const USE_UNIFIED_LAYOUT = false;
 
 interface PracticeTestsProps {
   user: User | null;
@@ -369,6 +382,513 @@ export const ReadAloud: React.FC<PracticeTestsProps> = ({ user }) => {
     setShowAttempts(true);
   };
 
+  // Helper function to format time in MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Get recording status for subtitle
+  const getRecordingStatus = () => {
+    if (preparationTime !== null && preparationTime > 0) {
+      return `Preparation time: ${preparationTime}s remaining`;
+    }
+    if (audioRecording.isRecording) {
+      return 'Recording in progress...';
+    }
+    if (audioRecording.recordedBlob) {
+      return 'Recording completed';
+    }
+    return 'Click "Start Recording" when ready';
+  };
+
+  // Map difficulty to ModernPracticeLayout format
+  const mapDifficulty = (difficulty?: 'Beginner' | 'Intermediate' | 'Advanced'): 'Beginner' | 'Intermediate' | 'Hard' => {
+    if (difficulty === 'Advanced') return 'Hard';
+    return (difficulty || 'Intermediate') as 'Beginner' | 'Intermediate' | 'Hard';
+  };
+
+  // ============================================================================
+  // MODERN LAYOUT VERSION (Screenshot-based design)
+  // ============================================================================
+  if (USE_MODERN_LAYOUT) {
+    if (loading) {
+      return (
+        <Box
+          sx={{
+            minHeight: '100vh',
+            bgcolor: '#000000',
+            color: '#FFFFFF',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6">Loading questions...</Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <>
+        <ModernPracticeLayout
+          icon="RA"
+          title="Speaking: Read Aloud"
+          progress={`${completedQuestions}/${readAloudQuestions.length} questions attempted`}
+          instructions="You will see a text on screen. You have 40 seconds to read and understand it, then 40 seconds to read it aloud."
+          time={formatTime(timer.timeRemaining ?? 0)}
+          timeRunning={timer.isRunning}
+          difficulty={mapDifficulty(selectedQuestion?.difficulty)}
+          questionInfo={`Question ${currentQuestionIndex + 1} of ${readAloudQuestions.length}.`}
+          audioTime={formatTime(preparationTime ?? selectedQuestion?.preparationTime ?? 0)}
+          audioTotal={formatTime(selectedQuestion?.preparationTime ?? 40)}
+          audioCurrentTime={preparationTime ?? selectedQuestion?.preparationTime ?? 0}
+          audioDuration={selectedQuestion?.preparationTime ?? 40}
+          isAudioPlaying={timer.isRunning}
+          playbackSpeed={1.0}
+          volume={70}
+          onAudioPlayPause={handleStartPreparation}
+          onAudioSeek={(value) => setPreparationTime(value)}
+          onSpeedChange={(speed) => console.log('Speed:', speed)}
+          onVolumeChange={(vol) => console.log('Volume:', vol)}
+          audioVoiceInfo="Text-to-Speech Practice"
+          recordingSectionProps={{
+            isRecording: audioRecording.isRecording,
+            recordedBlob: audioRecording.recordedBlob,
+            recordedAudioUrl: audioRecording.recordedAudioUrl,
+            micPermission: audioRecording.micPermission,
+            showRecordingPrompt: showRecordingPrompt,
+            preparationTime: preparationTime,
+            recordingType: "Read Aloud",
+            recordingTime: selectedQuestion?.recordingTime ?? 40,
+            onToggleRecording: audioRecording.toggleRecording,
+          }}
+          onSubmit={handleSubmit}
+          onShowAnswer={() => setShowAnswer(true)}
+          submitDisabled={!audioRecording.recordedBlob}
+          onPrevious={handlePrevious}
+          onRedo={handleRedo}
+          onNext={handleNext}
+          previousDisabled={currentQuestionIndex === 0}
+          nextDisabled={currentQuestionIndex === readAloudQuestions.length - 1}
+          showResults={false}
+          useAIEvaluation={false}
+        />
+
+        {/* Dialogs */}
+        <TopicSelectionDrawer
+          open={showTopicSelector}
+          onClose={() => setShowTopicSelector(false)}
+          onSelect={handleTopicSelect}
+          topics={readAloudQuestions.map((q) => ({
+            ...q,
+            title: q.text.substring(0, 50) + '...',
+            duration: `${q.preparationTime + q.recordingTime}s`,
+            speaker: 'Narrator',
+          }))}
+          title="Select Read Aloud Question"
+          type="question"
+        />
+
+        <AnswerDialog
+          open={showAnswer}
+          onClose={() => setShowAnswer(false)}
+          title={selectedQuestion?.text.substring(0, 50) + '...'}
+          text={selectedQuestion?.text}
+          answers={[
+            {
+              id: '1',
+              position: 1,
+              correctAnswer: selectedQuestion?.expectedAnswer || '',
+            },
+          ]}
+        />
+
+        <TranslationDialog
+          open={showTranslate}
+          onClose={() => setShowTranslate(false)}
+          description="Translation feature will help you understand the text content in your preferred language."
+        />
+
+        <Dialog open={showAttempts} onClose={() => setShowAttempts(false)} maxWidth="md" fullWidth>
+          <DialogTitle>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="h6">Past Attempts</Typography>
+              <IconButton onClick={() => setShowAttempts(false)}>
+                <Close />
+              </IconButton>
+            </Stack>
+          </DialogTitle>
+          <DialogContent>
+            {attempts.length === 0 ? (
+              <Typography variant="body2">No attempts recorded yet.</Typography>
+            ) : (
+              <List>
+                {attempts.map((attempt, index) => {
+                  const question = readAloudQuestions.find((q) => q.id === attempt.questionId);
+                  return (
+                    <ListItem key={index}>
+                      <ListItemText
+                        primary={`Text: ${question?.text.substring(0, 50) || 'Unknown'}...`}
+                        secondary={
+                          <>
+                            <Typography component="span" variant="body2">
+                              Time: {new Date(attempt.timestamp).toLocaleString()}
+                            </Typography>
+                            {attempt.recordedAudioUrl && (
+                              <audio
+                                controls
+                                src={attempt.recordedAudioUrl}
+                                style={{ width: '100%', marginTop: '8px' }}
+                              >
+                                Your browser does not support the audio element.
+                              </audio>
+                            )}
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  );
+                })}
+              </List>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="error"
+              onClick={() => {
+                setAttempts([]);
+                localStorage.removeItem('readAloudAttempts');
+              }}
+            >
+              Clear Attempts
+            </Button>
+            <Button onClick={() => setShowAttempts(false)}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
+
+  // ============================================================================
+  // UNIFIED LAYOUT VERSION
+  // ============================================================================
+  if (USE_UNIFIED_LAYOUT) {
+    return (
+      <GradientBackground>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <Typography variant="h6" sx={{ color: '#FFFFFF' }}>Loading questions...</Typography>
+          </Box>
+        ) : (
+          <>
+            <UnifiedPracticeLayout
+              // Header props
+              icon="RA"
+              title="Speaking: Read Aloud"
+              subtitle={`Progress: ${completedQuestions}/${readAloudQuestions.length} questions attempted`}
+              instructions="You will see a text on screen. You have 40 seconds to read and understand it, then 40 seconds to read it aloud."
+              difficulty={selectedQuestion?.difficulty}
+              instructionsConfig={{
+                sections: instructionsSections,
+                size: 'medium',
+                color: 'primary',
+                tooltipTitle: 'View detailed instructions for Read Aloud',
+              }}
+
+              // Question header
+              questionNumber={questionNumber}
+              studentName={studentName}
+              testedCount={testedCount}
+
+              // Timer
+              showTimer={preparationTime !== null}
+              timerProps={{
+                timeRemaining: timer.timeRemaining ?? 0,
+                isRunning: timer.isRunning,
+                warningThreshold: timer.warningThreshold,
+                autoSubmit: timer.autoSubmit,
+                showStartMessage: false,
+              }}
+
+              // Layout
+              layoutMode="two-column"
+
+              // Left section: Text to Read
+              leftSection={{
+                title: 'Text to Read',
+                content: (
+                  <Box>
+                    {/* Start Preparation Button */}
+                    {!preparationTime && (
+                      <Box sx={{ mb: 3, textAlign: 'center' }}>
+                        <button
+                          onClick={handleStartPreparation}
+                          style={{
+                            padding: '12px 24px',
+                            backgroundColor: '#4caf50',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s',
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#388e3c')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4caf50')}
+                        >
+                          Start Preparation Timer
+                        </button>
+                      </Box>
+                    )}
+
+                    {/* Text Content */}
+                    <Box
+                      sx={{
+                        fontSize: '18px',
+                        lineHeight: 1.8,
+                        fontWeight: 'medium',
+                        color: '#FFFFFF',
+                        p: 3,
+                        bgcolor: '#2a2a2a',
+                        borderRadius: 2,
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
+                      {selectedQuestion?.text}
+                    </Box>
+
+                    {/* Tags */}
+                    {selectedQuestion?.tags && selectedQuestion.tags.length > 0 && (
+                      <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap', gap: 1 }}>
+                        {selectedQuestion.category && (
+                          <Box
+                            sx={{
+                              px: 2,
+                              py: 0.5,
+                              bgcolor: 'rgba(33, 150, 243, 0.1)',
+                              border: '1px solid',
+                              borderColor: 'primary.main',
+                              borderRadius: 2,
+                              color: 'primary.main',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {selectedQuestion.category}
+                          </Box>
+                        )}
+                        {selectedQuestion.difficulty && (
+                          <Box
+                            sx={{
+                              px: 2,
+                              py: 0.5,
+                              bgcolor:
+                                selectedQuestion.difficulty === 'Beginner'
+                                  ? 'rgba(76, 175, 80, 0.1)'
+                                  : selectedQuestion.difficulty === 'Intermediate'
+                                  ? 'rgba(255, 152, 0, 0.1)'
+                                  : 'rgba(244, 67, 54, 0.1)',
+                              border: '1px solid',
+                              borderColor:
+                                selectedQuestion.difficulty === 'Beginner'
+                                  ? '#4caf50'
+                                  : selectedQuestion.difficulty === 'Intermediate'
+                                  ? '#ff9800'
+                                  : '#f44336',
+                              borderRadius: 2,
+                              color:
+                                selectedQuestion.difficulty === 'Beginner'
+                                  ? '#4caf50'
+                                  : selectedQuestion.difficulty === 'Intermediate'
+                                  ? '#ff9800'
+                                  : '#f44336',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {selectedQuestion.difficulty}
+                          </Box>
+                        )}
+                        {selectedQuestion.tags.map((tag, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              px: 2,
+                              py: 0.5,
+                              bgcolor: 'rgba(156, 39, 176, 0.1)',
+                              border: '1px solid',
+                              borderColor: '#9c27b0',
+                              borderRadius: 2,
+                              color: '#9c27b0',
+                              fontSize: '14px',
+                            }}
+                          >
+                            {tag}
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
+                  </Box>
+                ),
+              }}
+
+              // Right section: Record Your Answer
+              rightSection={{
+                title: 'Record Your Answer',
+                subtitle: getRecordingStatus(),
+                content: (
+                  <RecordingAnswerContent
+                    isRecording={audioRecording.isRecording}
+                    recordedBlob={audioRecording.recordedBlob}
+                    recordedAudioUrl={audioRecording.recordedAudioUrl}
+                    micPermission={audioRecording.micPermission}
+                    showPreparationTimer={false}
+                    preparationTime={preparationTime}
+                    showRecordingPrompt={showRecordingPrompt}
+                    recordingTime={selectedQuestion?.recordingTime ?? 40}
+                    recordingTimeLeft={null}
+                    onToggleRecording={audioRecording.toggleRecording}
+                    recordingType="reading"
+                    formatTime={formatTime}
+                  />
+                ),
+              }}
+
+              // Action buttons
+              actionButtonsProps={{
+                hasResponse: audioRecording.recordedBlob !== null,
+                recordedBlob: audioRecording.recordedBlob,
+                onSubmit: handleSubmit,
+                onRedo: handleRedo,
+                onTranslate: () => setShowTranslate(true),
+                onShowAnswer: () => setShowAnswer(true),
+                handleViewAttempts: handleViewAttempts,
+              }}
+
+              // Navigation
+              navigationProps={{
+                onSearch: handleSearch,
+                onPrevious: handlePrevious,
+                onNext: handleNext,
+                questionNumber: questionNumber,
+              }}
+
+              // Additional content: Progress and Feedback
+              additionalContent={
+                <Box>
+                  <ProgressIndicator
+                    current={audioRecording.recordedBlob ? 1 : 0}
+                    total={1}
+                    label="recording completed"
+                  />
+                  <FeedbackDisplay feedback={scores[selectedQuestion?.id || '']} />
+                </Box>
+              }
+            />
+
+            {/* Dialogs - Same as before */}
+            <TopicSelectionDrawer
+              open={showTopicSelector}
+              onClose={() => setShowTopicSelector(false)}
+              onSelect={handleTopicSelect}
+              topics={readAloudQuestions.map((q) => ({
+                ...q,
+                title: q.text.substring(0, 50) + '...',
+                duration: `${q.preparationTime + q.recordingTime}s`,
+                speaker: 'Narrator',
+              }))}
+              title="Select Read Aloud Question"
+              type="question"
+            />
+
+            <AnswerDialog
+              open={showAnswer}
+              onClose={() => setShowAnswer(false)}
+              title={selectedQuestion?.text.substring(0, 50) + '...'}
+              text={selectedQuestion?.text}
+              answers={[
+                {
+                  id: '1',
+                  position: 1,
+                  correctAnswer: selectedQuestion?.expectedAnswer || '',
+                },
+              ]}
+            />
+
+            <TranslationDialog
+              open={showTranslate}
+              onClose={() => setShowTranslate(false)}
+              description="Translation feature will help you understand the text content in your preferred language."
+            />
+
+            <Dialog open={showAttempts} onClose={() => setShowAttempts(false)} maxWidth="md" fullWidth>
+              <DialogTitle>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Typography variant="h6">Past Attempts</Typography>
+                  <IconButton onClick={() => setShowAttempts(false)}>
+                    <Close />
+                  </IconButton>
+                </Stack>
+              </DialogTitle>
+              <DialogContent>
+                {attempts.length === 0 ? (
+                  <Typography variant="body2">No attempts recorded yet.</Typography>
+                ) : (
+                  <List>
+                    {attempts.map((attempt, index) => {
+                      const question = readAloudQuestions.find((q) => q.id === attempt.questionId);
+                      return (
+                        <ListItem key={index}>
+                          <ListItemText
+                            primary={`Text: ${question?.text.substring(0, 50) || 'Unknown'}...`}
+                            secondary={
+                              <>
+                                <Typography component="span" variant="body2">
+                                  Time: {new Date(attempt.timestamp).toLocaleString()}
+                                </Typography>
+                                {attempt.recordedAudioUrl && (
+                                  <audio
+                                    controls
+                                    src={attempt.recordedAudioUrl}
+                                    style={{ width: '100%', marginTop: '8px' }}
+                                  >
+                                    Your browser does not support the audio element.
+                                  </audio>
+                                )}
+                              </>
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  color="error"
+                  onClick={() => {
+                    setAttempts([]);
+                    localStorage.removeItem('readAloudAttempts');
+                  }}
+                >
+                  Clear Attempts
+                </Button>
+                <Button onClick={() => setShowAttempts(false)}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
+      </GradientBackground>
+    );
+  }
+
+  // ============================================================================
+  // OLD LAYOUT VERSION (Preserved for fallback)
+  // ============================================================================
   return (
     <GradientBackground>
       {loading ? (

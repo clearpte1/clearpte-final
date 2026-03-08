@@ -56,7 +56,7 @@ const WhyUsePTECoreOnlineTests: React.FC = () => {
       sx={{
         width: '100%',
         py: { xs: 5, md: 8 },
-        background: '#f8fafc',
+        background: '#0a0a0a',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -67,7 +67,7 @@ const WhyUsePTECoreOnlineTests: React.FC = () => {
         sx={{
           fontWeight: 700,
           mb: { xs: 4, md: 6 },
-          color: '#22334d',
+          color: '#FFFFFF',
           textAlign: 'center',
         }}
       >
@@ -106,8 +106,8 @@ const WhyUsePTECoreOnlineTests: React.FC = () => {
                 p: { xs: 3, md: 4 },
                 height: '100%',
                 borderRadius: 3,
-                background: '#fff',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                background: '#1a1a1a',
+                boxShadow: '0 2px 12px rgba(255,255,255,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -116,20 +116,20 @@ const WhyUsePTECoreOnlineTests: React.FC = () => {
                 transition: 'box-shadow 0.2s',
                 width: '100%',
                 '&:hover': {
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.10)',
+                  boxShadow: '0 4px 24px rgba(77, 195, 247, 0.20)',
                 },
               }}
             >
               {feature.icon}
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 700, mt: 2, mb: 1, color: '#22334d' }}
+                sx={{ fontWeight: 700, mt: 2, mb: 1, color: '#FFFFFF' }}
               >
                 {feature.title}
               </Typography>
               <Typography
                 variant="body2"
-                sx={{ color: '#4b5563', fontSize: { xs: '0.98rem', md: '1.05rem' } }}
+                sx={{ color: '#B0B0B0', fontSize: { xs: '0.98rem', md: '1.05rem' } }}
               >
                 {feature.description}
               </Typography>

@@ -44,7 +44,7 @@ const FeaturesTabsSection: React.FC = () => {
       sx={{
         width: '100%',
         py: { xs: 5, md: 8 },
-        background: '#fff',
+        background: '#000000',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -55,7 +55,7 @@ const FeaturesTabsSection: React.FC = () => {
         sx={{
           fontWeight: 700,
           mb: { xs: 4, md: 6 },
-          color: '#22334d',
+          color: '#FFFFFF',
           textAlign: 'center',
         }}
       >
@@ -85,12 +85,12 @@ const FeaturesTabsSection: React.FC = () => {
               width: isSmDown ? '100%' : `${100 / features.length}%`,
               minWidth: 0,
               maxWidth: '100%',
-              background: selected === idx ? '#ffbb6c' : '#22334d',
-              color: selected === idx ? '#22334d' : '#fff',
+              background: selected === idx ? 'primary.main' : '#1a1a1a',
+              color: selected === idx ? '#000000' : '#FFFFFF',
               fontWeight: 600,
               fontSize: { xs: '1rem', md: '1.1rem' },
-              borderRight: isSmDown ? 'none' : idx !== features.length - 1 ? '2px solid #fff' : 'none',
-              borderBottom: isSmDown && idx !== features.length - 1 ? '2px solid #fff' : 'none',
+              borderRight: isSmDown ? 'none' : idx !== features.length - 1 ? '2px solid rgba(255,255,255,0.1)' : 'none',
+              borderBottom: isSmDown && idx !== features.length - 1 ? '2px solid rgba(255,255,255,0.1)' : 'none',
               transition: 'background 0.2s, color 0.2s',
               borderRadius: 0,
               justifyContent: 'center',
@@ -109,7 +109,7 @@ const FeaturesTabsSection: React.FC = () => {
         sx={{
           width: '100%',
           maxWidth: 1400,
-          background: '#f5f6f7',
+          background: '#0a0a0a',
           borderRadius: 2,
           display: 'flex',
           flexDirection: isSmDown ? 'column' : 'row',
@@ -137,7 +137,7 @@ const FeaturesTabsSection: React.FC = () => {
               maxWidth: 500,
               borderRadius: 2,
               boxShadow: 1,
-              background: '#fff',
+              background: '#1a1a1a',
               objectFit: 'contain',
             }}
           />
@@ -153,10 +153,10 @@ const FeaturesTabsSection: React.FC = () => {
             px: { xs: 1, md: 4 },
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#22334d', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#FFFFFF', mb: 2 }}>
             {features[selected].title}
           </Typography>
-          <Typography variant="body1" sx={{ color: '#22334d', fontSize: { xs: '1.05rem', md: '1.15rem' } }}>
+          <Typography variant="body1" sx={{ color: '#B0B0B0', fontSize: { xs: '1.05rem', md: '1.15rem' } }}>
             {features[selected].description}
           </Typography>
         </Box>

@@ -16,8 +16,8 @@ async def upload_read_aloud_questions(
 ):
   try:
     # Expected fields in each question
-    required_fields = ['title', 'text', 'preparationTime', 'recordingTime', 
-             'difficulty', 'category', 'tags', 'expectedAnswer']
+    required_fields = ['title', 'text',
+             'difficulty', 'category']
     
     # Validate all questions have required fields
     for question in questions_data:
@@ -37,8 +37,8 @@ async def upload_read_aloud_questions(
         recording_time=data.get('recordingTime', 40),
         difficulty=str(data['difficulty']).replace("'", "''").strip(),
         category=str(data['category']).replace("'", "''").strip(),
-        tags=[tag.replace("'", "''").strip() for tag in str(data['tags']).split(',')],
-        expected_answer=str(data['expectedAnswer']).replace("'", "''").strip()
+        tags=[tag.replace("'", "''").strip() for tag in str(data.get('tags', '')).split(',') if tag.strip()],
+        expected_answer=str(data.get('expectedAnswer', '')).replace("'", "''").strip()
       )
       questions.append(question)
     

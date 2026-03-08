@@ -54,24 +54,39 @@ const InstructionsPopover: React.FC<InstructionsPopoverProps> = ({
 
   return (
     <>
-      <Tooltip title={tooltipTitle} arrow>
+      <Tooltip
+        title={tooltipTitle}
+        arrow
+        componentsProps={{
+          tooltip: {
+            sx: {
+              bgcolor: '#2a2a2a',
+              color: '#FFFFFF',
+              fontSize: '0.75rem',
+              '& .MuiTooltip-arrow': {
+                color: '#2a2a2a',
+              }
+            }
+          }
+        }}
+      >
         <IconButton
           onClick={handleClick}
           size={size}
           sx={{
-            color: color === 'primary' ? 'primary.main' : 
-                   color === 'secondary' ? 'secondary.main' : 'text.secondary',
-            bgcolor: 'background.paper',
+            color: color === 'primary' ? 'primary.main' :
+                   color === 'secondary' ? 'secondary.main' : '#B0B0B0',
+            bgcolor: '#2a2a2a',
             border: '1px solid',
-            borderColor: color === 'primary' ? 'primary.light' : 
-                        color === 'secondary' ? 'secondary.light' : 'divider',
-            boxShadow: theme.shadows[2],
+            borderColor: color === 'primary' ? 'primary.light' :
+                        color === 'secondary' ? 'secondary.light' : 'rgba(255,255,255,0.2)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
             '&:hover': {
-              bgcolor: color === 'primary' ? 'primary.light' : 
-                       color === 'secondary' ? 'secondary.light' : 'action.hover',
-              color: color !== 'default' ? 'white' : 'text.primary',
+              bgcolor: color === 'primary' ? 'primary.light' :
+                       color === 'secondary' ? 'secondary.light' : 'rgba(255,255,255,0.1)',
+              color: color !== 'default' ? 'white' : '#FFFFFF',
               transform: 'scale(1.05)',
-              boxShadow: theme.shadows[4]
+              boxShadow: '0 4px 16px rgba(0,0,0,0.4)'
             },
             transition: 'all 0.2s ease-in-out'
           }}
@@ -97,17 +112,18 @@ const InstructionsPopover: React.FC<InstructionsPopoverProps> = ({
             maxWidth: { xs: '90vw', sm: 400, md: 500 },
             maxHeight: { xs: '70vh', sm: 600 },
             borderRadius: 3,
-            boxShadow: theme.shadows[8],
-            border: `1px solid ${theme.palette.divider}`
+            bgcolor: '#1a1a1a',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+            border: '1px solid rgba(255,255,255,0.1)'
           }
         }}
       >
-        <Paper elevation={0} sx={{ p: 0 }}>
+        <Paper elevation={0} sx={{ p: 0, bgcolor: 'transparent' }}>
           {/* Header */}
-          <Box sx={{ 
-            p: 2, 
+          <Box sx={{
+            p: 2,
             pb: 1,
-            borderBottom: `1px solid ${theme.palette.divider}`,
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
             bgcolor: 'primary.main',
             color: 'white'
           }}>
@@ -150,20 +166,24 @@ const InstructionsPopover: React.FC<InstructionsPopoverProps> = ({
           </Box>
 
           {/* Content */}
-          <Box sx={{ 
-            p: 2, 
+          <Box sx={{
+            p: 2,
+            bgcolor: '#1a1a1a',
             maxHeight: { xs: '50vh', sm: 400 },
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: 6,
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: 'rgba(0,0,0,0.1)',
+              backgroundColor: 'rgba(255,255,255,0.05)',
               borderRadius: 3,
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: 'rgba(0,0,0,0.3)',
+              backgroundColor: 'rgba(255,255,255,0.2)',
               borderRadius: 3,
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.3)',
+              }
             },
           }}>
             <Stack spacing={2}>
@@ -193,10 +213,10 @@ const InstructionsPopover: React.FC<InstructionsPopoverProps> = ({
                       >
                         <ListItemText
                           primary={
-                            <Typography 
+                            <Typography
                               variant="body2"
-                              sx={{ 
-                                color: 'text.secondary',
+                              sx={{
+                                color: '#B0B0B0',
                                 lineHeight: 1.5,
                                 fontSize: { xs: '12px', sm: '13px' }
                               }}
@@ -210,7 +230,7 @@ const InstructionsPopover: React.FC<InstructionsPopoverProps> = ({
                   </List>
                   
                   {index < sections.length - 1 && (
-                    <Divider sx={{ mt: 1 }} />
+                    <Divider sx={{ mt: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
                   )}
                 </Box>
               ))}

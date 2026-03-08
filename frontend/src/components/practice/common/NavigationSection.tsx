@@ -24,14 +24,14 @@ const NavigationSection: React.FC<NavigationSectionProps> = ({
   return (
     <Box sx={{ width: '100%' }}>
       {/* Mobile: Stack vertically, Desktop: Stack horizontally */}
-      <Stack 
-        direction={{ xs: 'column', md: 'row' }} 
-        alignItems={{ xs: 'stretch', md: 'center' }} 
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        alignItems={{ xs: 'stretch', md: 'center' }}
         justifyContent={{ xs: 'center', md: 'space-between' }}
-        spacing={{ xs: 2, md: 0 }}
+        spacing={{ xs: 1.5, md: 0 }}
       >
         {/* Question Counter - Always visible */}
-        <Stack direction="row" spacing={1.5} sx={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Stack direction="row" spacing={1} sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Chip 
             onClick={() => { }} 
             label="× 5" 

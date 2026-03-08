@@ -66,7 +66,7 @@ const TestimonialSection: React.FC = () => {
       sx={{
         width: '100%',
         py: { xs: 5, md: 8 },
-        background: '#f5f6f7',
+        background: '#0a0a0a',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -77,7 +77,7 @@ const TestimonialSection: React.FC = () => {
         sx={{
           fontWeight: 700,
           mb: { xs: 4, md: 6 },
-          color: '#22334d',
+          color: '#FFFFFF',
           textAlign: 'center',
         }}
       >
@@ -110,24 +110,24 @@ const TestimonialSection: React.FC = () => {
           >
             <Avatar
               src={t.avatar}
-              sx={{ width: 72, height: 72, mb: 1, bgcolor: t.avatar ? undefined : '#90caf9', fontSize: 40 }}
+              sx={{ width: 72, height: 72, mb: 1, bgcolor: t.avatar ? undefined : 'primary.main', fontSize: 40 }}
             >
               {!t.avatar && t.name[0]}
             </Avatar>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#22334d', mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#FFFFFF', mb: 1 }}>
               {t.name}
             </Typography>
             <Typography
               variant="body1"
               sx={{
-                color: '#888',
+                color: '#B0B0B0',
                 fontStyle: 'italic',
                 fontSize: { xs: '1.05rem', md: '1.15rem' },
                 mb: 2,
                 maxWidth: 340,
               }}
             >
-              “ {t.text} ”
+              " {t.text} "
             </Typography>
           </Box>
         ))}
@@ -152,15 +152,15 @@ const TestimonialSection: React.FC = () => {
       <Button
         variant="contained"
         sx={{
-          background: '#22334d',
-          color: '#fff',
+          background: 'primary.main',
+          color: '#000000',
           fontWeight: 700,
           fontSize: '1.1rem',
           px: 5,
           py: 1.5,
           borderRadius: 2,
           boxShadow: 2,
-          '&:hover': { background: '#1a253b' },
+          '&:hover': { background: 'primary.light' },
         }}
       >
         View all

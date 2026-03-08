@@ -45,13 +45,13 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   const displayText = customLabel || `${current} of ${total} ${label.toLowerCase()}`;
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Typography 
-        variant="body2" 
-        color="textSecondary" 
-        sx={{ 
-          mb: 1,
-          fontSize: { xs: '12px', sm: '14px' }
+    <Box sx={{ mb: 2 }}>
+      <Typography
+        variant="body2"
+        color="textSecondary"
+        sx={{
+          mb: 0.75,
+          fontSize: { xs: '11px', sm: '13px' }
         }}
       >
         {displayText}
